@@ -12,6 +12,8 @@ DESCRIPTION = "A small image just capable of allowing a device to boot plus a \
 real-time test suite and tools appropriate for real-time use."
 DEPENDS = "linux-raspberrypi-rt"
 
+IMAGE_FEATURES += "splash"
+
 IMAGE_INSTALL += "kernel-module-fbtft \
 				kernel-module-fbtft-device \
 				kernel-module-fb-ili9320 \
