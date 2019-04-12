@@ -1,0 +1,91 @@
+From 3108d2df12ce37299b2f762b79f247bf994fb180 Mon Sep 17 00:00:00 2001
+From: adorbs <adorbsmusic@gmail.com>
+Date: Fri, 12 Apr 2019 00:19:30 -0700
+Subject: [PATCH] add ili9320 dtoverlay
+
+---
+ arch/arm/boot/dts/overlays/Makefile           |  1 +
+ .../arm/boot/dts/overlays/ili9320-overlay.dts | 62 +++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+ create mode 100644 arch/arm/boot/dts/overlays/ili9320-overlay.dts
+
+diff --git a/arch/arm/boot/dts/overlays/Makefile b/arch/arm/boot/dts/overlays/Makefile
+index e6313733127b..a2ee8adc5a3f 100644
+--- a/arch/arm/boot/dts/overlays/Makefile
++++ b/arch/arm/boot/dts/overlays/Makefile
+@@ -62,6 +62,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
+ 	i2c0-bcm2708.dtbo \
+ 	i2c1-bcm2708.dtbo \
+ 	i2s-gpio28-31.dtbo \
++	ili9320.dtbo \
+ 	iqaudio-dac.dtbo \
+ 	iqaudio-dacplus.dtbo \
+ 	iqaudio-digi-wm8804-audio.dtbo \
+diff --git a/arch/arm/boot/dts/overlays/ili9320-overlay.dts b/arch/arm/boot/dts/overlays/ili9320-overlay.dts
+new file mode 100644
+index 000000000000..daec4fe9ff91
+--- /dev/null
++++ b/arch/arm/boot/dts/overlays/ili9320-overlay.dts
+@@ -0,0 +1,62 @@
++/*
++ * Device Tree overlay for ili9320
++ *
++ */
++
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709";
++
++	fragment@0 {
++		target = <&spi0>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@1 {
++		target = <&spidev0>;
++		__overlay__ {
++			status = "disabled";
++		};
++	};
++
++	fragment@2 {
++		target = <&spidev1>;
++		__overlay__ {
++			status = "disabled";
++		};
++	};
++
++	fragment@3 {
++		target = <&spi0>;
++		__overlay__ {
++			/* needed to avoid dtc warning */
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			ili9320: ili9320@0{
++				compatible = "ilitek,ili9320";
++				reg = <0>;
++				spi-max-frequency = <32000000>;
++				spi-cpol;
++				spi-cpha;
++				rotate = <270>;
++				bgr;
++				fps = <50>;
++				buswidth = <8>;
++				startbyte = <0x70>;
++				debug = <0>;
++			};
++		};
++	};
++
++	__overrides__ {
++		speed =		<&ili9320>,"spi-max-frequency:0";
++		rotate =	<&ili9320>,"rotate:0";
++		fps =		<&ili9320>,"fps:0";
++		debug =		<&ili9320>,"debug:0";
++	};
++};

@@ -14,10 +14,10 @@ DEPENDS = "linux-raspberrypi-rt"
 
 IMAGE_FEATURES += "splash"
 
-IMAGE_INSTALL += "kernel-module-fbtft \
-				kernel-module-fbtft-device \
-				kernel-module-fb-ili9320 \
+IMAGE_INSTALL += "kernel-modules \
 				rt-tests \
-				hwlatdetect"
+				hwlatdetect \
+				rpi-fbcp \
+"
 
 LICENSE = "MIT"
