@@ -18,6 +18,7 @@ IMAGE_INSTALL += "kernel-modules \
 				rt-tests \
 				hwlatdetect \
 				rpi-fbcp \
+				otto-core \
 "
 
 LICENSE = "MIT"
