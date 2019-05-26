@@ -10,7 +10,9 @@ python () {
 
 DESCRIPTION = "A small image just capable of allowing a device to boot plus a \
 real-time test suite and tools appropriate for real-time use."
-DEPENDS = "linux-raspberrypi-rt"
+
+# qemuwrapper-cross is needed in DEPENDS to fix error with font cache update
+DEPENDS = "linux-raspberrypi-rt qemuwrapper-cross"
 
 IMAGE_FEATURES += "splash"
 
@@ -19,6 +21,14 @@ IMAGE_INSTALL += "kernel-modules \
 				hwlatdetect \
 				rpi-fbcp \
 				otto-core \
+				ttf-roboto \
 "
 
 LICENSE = "MIT"
+
+addtask create_fonts_symlink after do_rootfs before do_image
+do_create_fonts_symlink () {
+	install -d ${IMAGE_ROOTFS}/home/root/otto/data/fonts
+	cd ${IMAGE_ROOTFS}/home/root/otto/data/fonts
+	ln -sf ../../../../..${datadir}/fonts/truetype/*.ttf ./
+}
