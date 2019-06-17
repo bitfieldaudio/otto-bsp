@@ -21,14 +21,25 @@ IMAGE_INSTALL += "kernel-modules \
 				hwlatdetect \
 				rpi-fbcp \
 				otto-core \
-				ttf-roboto \
+				alsa-utils \
+				i2c-tools \
+				otto-input \
+				openocd \
 "
 
 LICENSE = "MIT"
 
-addtask create_fonts_symlink after do_rootfs before do_image
-do_create_fonts_symlink () {
-	install -d ${IMAGE_ROOTFS}/home/root/otto/data/fonts
-	cd ${IMAGE_ROOTFS}/home/root/otto/data/fonts
-	ln -sf ../../../../..${datadir}/fonts/truetype/*.ttf ./
+### If not using the fonts in the otto-core data dir, then add ttf-roboto to IMAGE_INSTALL
+# addtask create_fonts_symlink after do_rootfs before do_image
+# do_create_fonts_symlink () {
+#	install -d ${IMAGE_ROOTFS}/home/root/otto/data/fonts
+#	cd ${IMAGE_ROOTFS}/home/root/otto/data/fonts
+#	ln -sf ../../../../..${datadir}/fonts/truetype/*.ttf ./
+# }
+
+addtask add_startup_modules after do_rootfs before do_image
+do_add_startup_modules () {
+	echo "i2c-dev" >> ${IMAGE_ROOTFS}/etc/modules
+	echo "snd-seq-midi" >> ${IMAGE_ROOTFS}/etc/modules
+	echo "uinput" >> ${IMAGE_ROOTFS}/etc/modules
 }

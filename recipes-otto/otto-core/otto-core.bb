@@ -1,8 +1,8 @@
 DESCRIPTION = "The OTTO core software."
 HOMEPAGE = "https://github.com/topisani/OTTO"
 
-SRCREV = "07505cd33c8bb836fccaa85de5726388e7ad3bdd"
-SRC_URI = "git://github.com/topisani/OTTO;branch=develop"
+SRCREV = "51ed8110dbf639ff7abc298f00352f20b1f6aa87"
+SRC_URI = "git://github.com/adorbs/OTTO;branch=feature/rpi-cleanup"
 PV = "1.0.0+git${SRCPV}"
 
 LICENSE = "MPL-2.0"
@@ -20,11 +20,12 @@ inherit cmake pkgconfig
 EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1 -DOTTO_USE_LIBCXX=ON"
 
 FILES_${PN} += "/home/root/otto/otto \
-				/home/root/otto/test \
+				/home/root/otto/data/* \
 "
 
 do_install_append () {
 	install -d ${D}/home/root/otto
 	install -m 0755 bin/otto ${D}/home/root/otto/
-	install -m 0755 bin/test ${D}/home/root/otto/
+	install -d ${D}/home/root/otto/data
+	cp -r ${S}/data/* ${D}/home/root/otto/data/
 }
