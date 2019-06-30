@@ -14,8 +14,6 @@ S = "${WORKDIR}"
 # we don't need a compiler nor a c library for these fonts
 INHIBIT_DEFAULT_DEPS = "1"
 
-PACKAGE_ARCH = "${MACHINE_ARCH}"
-
 FILES_${PN} = "${datadir}/fonts/truetype/RobotoCondensed-MediumItalic.ttf \
 	${datadir}/fonts/truetype/Roboto-Light.ttf \
 	${datadir}/fonts/truetype/Roboto-BoldItalic.ttf \
@@ -43,4 +41,4 @@ do_install() {
     find ./ -name '*.tt[cf]' -exec install -m 0644 {} ${D}${datadir}/fonts/truetype/ \;
 }
 
-inherit fontcache
+inherit allarch fontcache

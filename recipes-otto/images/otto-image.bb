@@ -25,6 +25,7 @@ IMAGE_INSTALL += "kernel-modules \
 				i2c-tools \
 				otto-input \
 				openocd \
+				toot-mcu-fw \
 "
 
 LICENSE = "MIT"

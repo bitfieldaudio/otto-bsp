@@ -1,3 +1,8 @@
+/*  File: otto-input.c
+	Description: I2C input to FIFO program for TOOT
+	Author: Steven Hang <github.com/adorbs>
+*/
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -12,27 +17,64 @@
 #include <linux/i2c-dev.h>
 #include <linux/input.h>
 #include <linux/uinput.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define NUM_ROWS		8
+#define NUM_COLUMNS		7
+#define NUM_ENCODERS	4
+#define REPORT_BYTES	NUM_ROWS+NUM_ENCODERS
+
+#define I2C_SLAVE_ADDR 	0x77
 
 static int is_signaled = 0;	/* Exit program if signaled */
 static int i2c_fd = -1;		/* Open /dev/i2c-1 device */
 static int f_debug = 0;		/* True to print debug messages */
+static int fifo_fd = -1;	/* fifo file descriptor */
 
-enum classic_pots  {RX,RY,LX,LY,LT,RT,classic_pots_MAX = RT};
-enum classic_buttons {BDR,BDL,BDU,BDD,BLT,BRT,BM,BH,BP,BZL,BZR,BA,BB,BX,BY,classic_buttons_MAX = BY};
-unsigned classic_button_map[classic_buttons_MAX+1] = {KEY_A,KEY_B,KEY_C,KEY_D,KEY_E,KEY_F,KEY_G,KEY_H,KEY_I,KEY_J,KEY_K,KEY_L,KEY_M,KEY_N,KEY_O};
-enum postkey {PKEY_UP, PKEY_DOWN};
+typedef struct input_data_t{
+	unsigned char ROW_1;
+	unsigned char ROW_2;
+	unsigned char ROW_3;
+	unsigned char ROW_4;
+	unsigned char ROW_5;
+	unsigned char ROW_6;
+	unsigned char ROW_7;
+	unsigned char ROW_8;
+	unsigned char ENCODER_BLUE; // Blue
+	unsigned char ENCODER_GREEN; // Green
+	unsigned char ENCODER_YELLOW; // Yellow
+	unsigned char ENCODER_RED; // Red
+}input_data_t;
 
-const char * const classic_button_names[classic_buttons_MAX+1] = {"BDR","BDL","BDU","BDD","BLT","BRT","BM","BH","BP","BZL","BZR","BA","BB","BX","BY"};
-const char * const classic_pot_names[classic_pots_MAX + 1] = {"RX","RY","LX","LY","LT","RT"};
+const char * const keyNames[NUM_ROWS][NUM_COLUMNS] = 
+	{{"C1",  "C4",  "C8",    "SHIFT",   "SENDS",    "C6:R1",   "BLUE"},
+	 {"S2",  "S7", "S12",     "OCT+", "ROUTING",   "RECORD", "YELLOW"},
+	 {"S3",  "S8", "S13",     "OCT-",     "FX2",   "MASTER",  "R3:C7"},
+	 {"C2",  "C5",  "C9",       "S1",     "FX1",     "PLAY",    "RED"},
+	 {"S4",  "S9", "S14",      "S16",     "ARP",	"SLOTS",  "R5:C7"},
+	 {"S5", "S10", "S15",   "TWIST2",  "LOOPER",   "TWIST1",  "R6:C7"},
+	 {"C3",  "C6", "C10",      "EXT", "SAMPLER", "ENVELOPE",  "GREEN"},
+	 {"S6",  "C7", "S11", "SETTINGS",     "SEQ",    "SYNTH",  "R8:C7"}};
 
-typedef struct {
-	unsigned char P[6];	 	//Pot Array
-	unsigned char B[15]; 	//Button Array
-	unsigned char raw[6];	//Raw received data
-} classic_s;
+const char const keyCodes[NUM_ROWS][NUM_COLUMNS] = 
+	{{(2<<6)|0, (2<<6)|3, (2<<6)| 7, (1<<6)|17, (1<<6)| 3,        -1, (0<<6)| 0},
+	 {(3<<6)|1, (3<<6)|6, (3<<6)|11, (1<<6)| 1, (1<<6)| 4, (1<<6)| 5, (0<<6)| 2},
+	 {(3<<6)|2, (3<<6)|7, (3<<6)|12, (1<<6)| 2, (1<<6)| 7, (1<<6)| 0,        -1},
+	 {(2<<6)|1, (2<<6)|4, (2<<6)| 8, (3<<6)| 0, (1<<6)| 6, (1<<6)| 8, (0<<6)| 3},
+	 {(3<<6)|3, (3<<6)|8, (3<<6)|13, (3<<6)|15, (1<<6)|13, (1<<6)|18,        -1},
+	 {(3<<6)|4, (3<<6)|9, (3<<6)|14, (1<<6)|20, (1<<6)| 9, (1<<6)|19,        -1},
+	 {(2<<6)|2, (2<<6)|5, (2<<6)| 9, (1<<6)|16, (1<<6)|11, (1<<6)|15, (0<<6)| 1},
+	 {(3<<6)|5, (2<<6)|6, (3<<6)|10, (1<<6)|12, (1<<6)|10, (1<<6)|14,        -1}};
 
-static void
-timed_wait(long sec,long usec,long early_usec) {
+const char * const encoderNames[NUM_ENCODERS] =
+	{"BLUE", "GREEN", "YELLOW", "RED"};
+
+const char const encoderCodes[NUM_ENCODERS] =
+	{0x30, 0x31, 0x32, 0x33};
+
+static void timed_wait(long sec,long usec,long early_usec) 
+{
     fd_set mt;
     struct timeval timeout;
     int rc;
@@ -47,25 +89,17 @@ timed_wait(long sec,long usec,long early_usec) {
     } while ( rc < 0 && timeout.tv_sec && timeout.tv_usec );
 }
 
-static void
-copy_classic_s(classic_s *now, classic_s *last){
-	//copy current data over to last
-	int n = sizeof(now->raw) / sizeof(now->raw[0]);
-	memcpy(last->raw, now->raw, n);
-	
-	n = sizeof(now->P) / sizeof(now->P[0]);
-	memcpy(last->P, now->P, n);
-	
-	n = sizeof(now->B) / sizeof(now->B[0]);
-	memcpy(last->B, now->B, n);
+static void copy_input_data(input_data_t* now, input_data_t* last)
+{
+	// Copy current data over to last
+	memcpy(last, now, sizeof(input_data_t)/sizeof(char));
 }
 
 	
 /*
  * Open I2C bus and check capabilities :
  */
-static void
-i2c_init(const char *node) {
+static void i2c_init(const char *node) {
 	unsigned long i2c_funcs = 0;	/* Support flags */
 	int rc;
 
@@ -86,64 +120,22 @@ i2c_init(const char *node) {
 }
 
 /*
- * Configure the nunchuk/controller for no encryption:
- * Works with all controller types.
+ * Read data:
  */
-static void
-controller_init() {
-	static char init_msg1[] = { 0xF0, 0x55 };
-	static char init_msg2[] = { 0xFB, 0x00 };
-	struct i2c_rdwr_ioctl_data msgset;
-	struct i2c_msg iomsgs[1];
-	int rc;
-
-	iomsgs[0].addr = 0x52;		/* Address of Nunchuk */
-	iomsgs[0].flags = 0;		/* Write */
-	iomsgs[0].buf = init_msg1;	/* Nunchuk 2 byte sequence */
-	iomsgs[0].len = 2;		/* 2 bytes */
-
-	msgset.msgs = iomsgs;
-	msgset.nmsgs = 1;
-
-	rc = ioctl(i2c_fd,I2C_RDWR,&msgset);
-	assert(rc == 1);
-
-	timed_wait(0,200,0);		/* Nunchuk needs time */
-
-	iomsgs[0].addr = 0x52;		/* Address of Nunchuk */
-	iomsgs[0].flags = 0;		/* Write */
-	iomsgs[0].buf = init_msg2;	/* Nunchuk 2 byte sequence */
-	iomsgs[0].len = 2;		/* 2 bytes */
-
-	msgset.msgs = iomsgs;
-	msgset.nmsgs = 1;
-
-	rc = ioctl(i2c_fd,I2C_RDWR,&msgset);
-	assert(rc == 1);
-	
-}
-
-
-
-/*
- * Read controller data:
- */
-static int
-classic_read(classic_s *data) {
+static int input_read(input_data_t* data)
+{
 	struct i2c_rdwr_ioctl_data msgset;
 	struct i2c_msg iomsgs[1];
 	char zero[1] = { 0x00 };	/* Written byte */
 	int rc;
-		
-	timed_wait(0,15000,0);
 
 	/*
-	 * Write the controller register address of 0x00 :
+	 * Send 0x00 command
 	 */
-	iomsgs[0].addr = 0x52;		/* controller address */
-	iomsgs[0].flags = 0;		/* Write */
-	iomsgs[0].buf = zero;		/* Sending buf */
-	iomsgs[0].len = 1;		/*  bytes */
+	iomsgs[0].addr = I2C_SLAVE_ADDR; /* i2c address */
+	iomsgs[0].flags = 0;			 /* Write */
+	iomsgs[0].buf = zero;			 /* Transmit buf */
+	iomsgs[0].len = 1;				 /*  bytes */
 
 	msgset.msgs = iomsgs;
 	msgset.nmsgs = 1;
@@ -152,15 +144,15 @@ classic_read(classic_s *data) {
 	if ( rc < 0 )
 		return -1;		/* I/O error */
 
-	timed_wait(0,200,0);		/* Zzzz, controller needs time */
+	timed_wait(0,200,0);		/* Give MCU Time */
 
 	/*
-	 * Read 6 bytes starting at 0x00 :
+	 * Read 12 bytes
 	 */
-	iomsgs[0].addr = 0x52;			/* controller address */
-	iomsgs[0].flags = I2C_M_RD;		/* Read */
-	iomsgs[0].buf = (char *)data->raw;	/* Receive raw bytes here */
-	iomsgs[0].len = 6;			/* 6 bytes */
+	iomsgs[0].addr = I2C_SLAVE_ADDR; /* i2c address */
+	iomsgs[0].flags = I2C_M_RD;		 /* Read */
+	iomsgs[0].buf = (char *)data;	 /* Receive buf */
+	iomsgs[0].len = REPORT_BYTES;	 /* 12 bytes */
 
 	msgset.msgs = iomsgs;
 	msgset.nmsgs = 1;
@@ -168,362 +160,196 @@ classic_read(classic_s *data) {
 	rc = ioctl(i2c_fd,I2C_RDWR,&msgset);
 	if ( rc < 0 )
 		return -1;			/* Failed */
-
-	data->P[RX] = (( data->raw[0] & 0xC0)  >> 3) |
-				  (( data->raw[1] & 0xC0 ) >> 5) |
-				  (( data->raw[2] & 0x80 ) >> 7);
-	data->P[RY] = data->raw[2] & 0x1F;
-	data->P[LX] = data->raw[0] & 0x3F;
-	data->P[LY] = data->raw[1] & 0x3F;
-	data->P[RT] = data->raw[3] & 0x1F;
-	data->P[LT] = (( data->raw[2] & 0x60 ) >> 2) |
-				  (( data->raw[3] & 0xE0 ) >> 5); 
-
-	data->B[BDR] = data->raw[4] & 0x80 ? 0 : 1;
-	data->B[BDD] = data->raw[4] & 0x40 ? 0 : 1;
-	data->B[BLT] = data->raw[4] & 0x20 ? 0 : 1;
-	data->B[BM]  = data->raw[4] & 0x10 ? 0 : 1;
-	data->B[BH]  = data->raw[4] & 0x08 ? 0 : 1;
-	data->B[BP]  = data->raw[4] & 0x04 ? 0 : 1;
-	data->B[BRT] = data->raw[4] & 0x02 ? 0 : 1;
-	
-	data->B[BZL] = data->raw[5] & 0x80 ? 0 : 1;
-	data->B[BB]  = data->raw[5] & 0x40 ? 0 : 1;
-	data->B[BY]  = data->raw[5] & 0x20 ? 0 : 1;
-	data->B[BA]  = data->raw[5] & 0x10 ? 0 : 1;
-	data->B[BX]  = data->raw[5] & 0x08 ? 0 : 1;
-	data->B[BZR] = data->raw[5] & 0x04 ? 0 : 1;
-	data->B[BDL] = data->raw[5] & 0x02 ? 0 : 1;
-	data->B[BDU] = data->raw[5] & 0x01 ? 0 : 1;
 	
 	return 0;
-}
-
-/*
- * Dump the classic controller data:
- */
-static void
-dump_data_classic(classic_s *data, classic_s *last) {
-	int x;
-
-	printf("Raw : ");
-	for ( x=0; x<6; x++ )
-		printf(" [%02X]",data->raw[x]);
-	putchar('\n');
-	printf("Last: ");
-	for ( x=0; x<6; x++ )
-		printf(" [%02X]",last->raw[x]);
-	putchar('\n');
-	printf("      data last\n");
-	for (x=0; x<classic_pots_MAX+1; x++)
-		printf("%3s = %04X %04X\n",classic_pot_names[x], data->P[x], last->P[x]);
-
-	for (x=0; x<classic_buttons_MAX+1; x++)
-		printf("%3s = %04X %04X\n",classic_button_names[x], data->B[x], last->B[x]);	
-	
 }
 
 /*
  * Close the I2C driver :
  */
-static void
-i2c_close(void) {
+static void i2c_close(void)
+{
 	close(i2c_fd);
 	i2c_fd = -1;
 }
 
 /*
- * Open a uinput node:
- */
-static int
-uinput_open(void) {
-	int fd;
-	struct uinput_user_dev uinp;
-	int rc,n;
-
-	fd = open("/dev/uinput",O_WRONLY|O_NONBLOCK);
-	if ( fd < 0 ) {
-		perror("Opening /dev/uinput");
-		exit(1);
-	}
-
-	rc = ioctl(fd,UI_SET_EVBIT,EV_KEY);
-	assert(!rc);
-	rc = ioctl(fd,UI_SET_EVBIT,EV_REL);
-	assert(!rc);
-
-	rc = ioctl(fd,UI_SET_RELBIT,REL_X);
-	assert(!rc);
-	rc = ioctl(fd,UI_SET_RELBIT,REL_Y);
-	assert(!rc);
-
-	rc = ioctl(fd,UI_SET_KEYBIT,KEY_ESC);
-	assert(!rc);
-
-	ioctl(fd,UI_SET_KEYBIT,BTN_MOUSE);
-	ioctl(fd,UI_SET_KEYBIT,BTN_TOUCH);
-	ioctl(fd,UI_SET_KEYBIT,BTN_MOUSE);
-	ioctl(fd,UI_SET_KEYBIT,BTN_LEFT);
-	ioctl(fd,UI_SET_KEYBIT,BTN_MIDDLE);
-	ioctl(fd,UI_SET_KEYBIT,BTN_RIGHT);
-	for (n = 0; n < classic_buttons_MAX+1; n++){
-		ioctl(fd,UI_SET_KEYBIT,classic_button_map[n]);
-	}
-
-	memset(&uinp,0,sizeof uinp);
-	strncpy(uinp.name,"classic",UINPUT_MAX_NAME_SIZE);
-	uinp.id.bustype = BUS_USB;
-	uinp.id.vendor  = 0x1;
-	uinp.id.product = 0x1;
-	uinp.id.version = 1;
-
-	rc = write(fd,&uinp,sizeof(uinp));
-	assert(rc == sizeof(uinp));
-
-	rc = ioctl(fd,UI_DEV_CREATE);
-	assert(!rc);
-	return fd;
-}
-
-/*
- * Post keystroke down and keystroke up events:
- * (unused here but available for your own experiments)
- * dir: 1 = down, 0 = up
- * enum postkey {PKEY_UP, PKEY_DOWN};
- */
-static void
-uinput_postkey(int fd,unsigned key, unsigned dir) {
-	struct input_event ev;
-	int rc;
-
-	memset(&ev,0,sizeof(ev));
-	ev.type = EV_KEY;
-	ev.code = key;
-	ev.value = dir;	
-
-	rc = write(fd,&ev,sizeof(ev));
-	assert(rc == sizeof(ev));
-}	
-
-
-/*
- * Post a synchronization point :
- */
-static void
-uinput_syn(int fd) {
-	struct input_event ev;
-	int rc;
-
-	memset(&ev,0,sizeof(ev));
-	ev.type = EV_SYN;
-	ev.code = SYN_REPORT;
-	ev.value = 0;
-	rc = write(fd,&ev,sizeof(ev));
-	assert(rc == sizeof(ev));
-}
-
-/*
- * Synthesize a button click:
- *	up_down		1=up, 0=down
- *	buttons		1=Left, 2=Middle, 4=Right
- */
-static void
-uinput_click(int fd,int up_down,int buttons) {
-	static unsigned codes[] = { BTN_LEFT, BTN_MIDDLE, BTN_RIGHT };
-	struct input_event ev;
-	int x;
-
-	memset(&ev,0,sizeof(ev));
-
-	/*
-	 * Button down or up events :
-	 */
-	for ( x=0; x < 3; ++x ) {
-		ev.type = EV_KEY;
-		ev.value = up_down;		/* Button Up or down */
-		if ( buttons & (1 << x) ) {	/* Button 0, 1 or 2 */
-			ev.code = codes[x];
-			write(fd,&ev,sizeof(ev));
-		}
-	}
-}
-
-/*
- * Synthesize relative mouse movement :
- */
-static void
-uinput_movement(int fd,int x,int y) {
-	struct input_event ev;
-	int rc;
-
-	memset(&ev,0,sizeof(ev));
-	ev.type = EV_REL;
-	ev.code = REL_X;
-	ev.value = x;
-
-	rc = write(fd,&ev,sizeof(ev));
-	assert(rc == sizeof(ev));
-
-	ev.code = REL_Y;
-	ev.value = y;
-	rc = write(fd,&ev,sizeof(ev));
-	assert(rc == sizeof(ev));
-}	
-
-/*
- * Close uinput device :
- */
-static void
-uinput_close(int fd) {
-	int rc;
-
-	rc = ioctl(fd,UI_DEV_DESTROY);
-	assert(!rc);
-	close(fd);
-}
-
-/*
  * Signal handler to quit the program :
  */
-static void
-sigint_handler(int signo) {
+static void sigint_handler(int signo)
+{
 	is_signaled = 1;		/* Signal to exit program */
 }
 
-/*
- * Curve the adjustment :
- */
-static int
-curve(int relxy) {
-	int ax = abs(relxy);		/* abs(relxy) */
-	int sgn = relxy < 0 ? -1 : 1;	/* sign(relxy) */
-	int mv = 1;			/* Smallest step */
-
-	if ( ax > 100 )
-		mv = 10;		/* Take large steps */
-	else if ( ax > 65 )
-		mv = 7;
-	else if ( ax > 35 )
-		mv = 5;
-	else if ( ax > 15 )
-		mv = 2;			/* 2nd smallest step */
-	return mv * sgn;
-}
-
-//Checks the RAW field against last measured values to see if a
-//button was pressed
-//return 0 if no change
-//		 1 if changed
-static int
-buttonChange(classic_s *data, classic_s *last){
-	if ( memcmp(&(data->raw[4]), &(last->raw[4]), 2) == 0 )
-		return 0;  
+//Checks two input states to see if there was a change
+static int inputChange(input_data_t* now, input_data_t* last)
+{
+	if ( memcmp(now, last, sizeof(input_data_t) ) == 0 )
+	{
+		return 0; // No change
+	}
 	else
-		return 1;
+	{
+		return 1; // There was a change
+	}
 }
-//Checks the RAW field against last measured for stick changes, 
-// with 2 points wiggle room for changes
-static int
-stickChange(classic_s *data, classic_s *last){
-	int n;
-	
-	for( n=0; n < sizeof(data->P); n++){
-		if (abs( data->P[n] - last->P[n]) > 0)  return 1;
+
+/*
+ * Generate the report of the input changes.
+ * This can be made MUCH more efficient
+ */
+static int generateReport(input_data_t* now, input_data_t* last, char* buffer, char* debugBuffer)
+{
+	int i, j;
+	unsigned char diff, mask, nowChar, lastChar;
+	int numBytes = 0;
+	debugBuffer[0] = '\0'; // Make first char null terminator so strcat can work
+
+	for (i=0; i<NUM_ROWS; i++)
+	{
+		nowChar = ((unsigned char *)now)[i];
+		lastChar = ((unsigned char *)last)[i];
+		diff = nowChar ^ lastChar;
+		for (j=0; j<NUM_COLUMNS; j++)
+		{
+			mask = 0x01 << j;
+			if (diff & mask)
+			{
+				if ( (nowChar & mask) > (lastChar & mask) )
+				{
+					buffer[numBytes++] = 0x20;
+					strcat(debugBuffer, "DOWN: ");
+				}
+				else
+				{
+					buffer[numBytes++] = 0x21;
+					strcat(debugBuffer, "UP: ");
+				}
+				buffer[numBytes++] = keyCodes[i][j];
+				buffer[numBytes++] = '\n';
+				strcat(debugBuffer, keyNames[i][j]);
+				strcat(debugBuffer,"\n");
+			}
+		}
+	}
+	for (i=NUM_ROWS; i<NUM_ROWS+NUM_ENCODERS; i++)
+	{
+		nowChar = ((unsigned char *)now)[i];
+		lastChar = ((unsigned char *)last)[i];
+		diff = nowChar ^ lastChar;
+		if (diff)
+		{
+			buffer[numBytes++] = encoderCodes[i-NUM_ROWS];
+			strcat(debugBuffer, encoderNames[i-NUM_ROWS]);
+			if (nowChar > lastChar)
+			{
+				if ((nowChar - lastChar) > 64)
+				{
+					buffer[numBytes++] = -1;
+					strcat(debugBuffer,"-");
+				}
+				else
+				{
+					buffer[numBytes++] = 1;
+					strcat(debugBuffer,"+");
+				}
+			}
+			else
+			{
+				if ((lastChar - nowChar) > 64)
+				{
+					buffer[numBytes++] = 1;
+					strcat(debugBuffer,"+");
+				}
+				else
+				{
+					buffer[numBytes++] = -1;
+					strcat(debugBuffer,"-");
+				}
+			}
+			buffer[numBytes++] = '\n';
+			strcat(debugBuffer,"\n");
+		}
 	}
 
-	return 0;
+	return numBytes;
 }
 
+static void fifo_init(const char *node) 
+{
+	int status;
+
+	status = mkfifo(node, 0666);
+
+	if ( status < 0 ) {
+		perror("Error making FIFO");
+		abort();
+	}
+
+	fifo_fd = open(node, O_RDWR);
+
+	if ( fifo_fd < 0 ) {
+		perror("Error opening FIFO");
+		abort();
+	}
+}
+
+static void fifo_close(const char *node)
+{
+	close(fifo_fd);
+	fifo_fd = -1;
+}
 /*
  * Main program :
  */
-void
-main(int argc,char **argv) {
-	int fd, need_sync;
-	classic_s cl_data, cl_last;
-	int delta_count = 0, n, key;
+void main(int argc,char **argv)
+{
+	input_data_t inputState, prevState;
+	char debugBuffer[256];
+	char reportBuffer[256];
+	int reportBytes = 0;
 
 	if ( argc > 1 && !strcmp(argv[1],"-d") )
 		f_debug = 1;				/* Enable debug messages */
 
-	(void)uinput_postkey;			/* Suppress compiler warning about unused */
-
+	fifo_init("/dev/toot-mcu-fifo");
 	i2c_init("/dev/i2c-1");			/* Open I2C controller */
-	controller_init();				/* Turn off encryption */
 
 	signal(SIGINT,sigint_handler);	/* Trap on SIGINT */
-	fd = uinput_open();				/* Open /dev/uinput */
 	
-	classic_read(&cl_data);   		/* Read to set initial values */
-	copy_classic_s(&cl_data, &cl_last);
+	input_read(&inputState);   		/* Read to set initial values */
 
-	while ( !is_signaled ) {
-		
-		copy_classic_s(&cl_data, &cl_last);
-		
-		while (!is_signaled & ( classic_read(&cl_data) < 0 )) {}
-		
-		//test for button change
-		//if ( buttonChange(&cl_data, &cl_last) || (stickChange(&cl_data, &cl_last)) )
-		if ( buttonChange(&cl_data, &cl_last) )
-			delta_count++;
-		else
-			continue;
-			
-		if ( f_debug ){
-			printf("delta: %i\n",delta_count);
-			dump_data_classic(&cl_data, &cl_last);	/* Dump nunchuk data */
-		}
-		
-		//Button logic is (dataB-lastB), if 0, no action happened. If 1, button down, if -1 button up
-		for(n = 0; n < (sizeof(cl_data.B)/sizeof(cl_data.B[0])); n++){
+	while ( !is_signaled )
+	{
 
-			if (cl_data.B[n] - cl_last.B[n]) // if not 0, a key action happened
+		timed_wait(0,16666,0); // 60 Hz Refresh
+		
+		copy_input_data(&inputState, &prevState);
+		
+		while (!is_signaled & ( input_read(&inputState) < 0 )) {}
+		
+		if ( inputChange(&inputState, &prevState) )
+		{
+			reportBytes = generateReport(&inputState, &prevState, reportBuffer, debugBuffer);
+			write(fifo_fd, reportBuffer, reportBytes);
+
+			if ( f_debug )
 			{
-				// if 1, then button down, if -1 it's a button release
-				if ( (cl_data.B[n] -cl_last.B[n]) == 1 ) 
-					key = PKEY_DOWN;
-				else
-					key = PKEY_UP;		 
-				
-				cl_last.B[n] = cl_data.B[n];
-				uinput_postkey(fd, classic_button_map[n], key);
-				uinput_syn(fd);
-				
-				if ( f_debug ) printf("%3s %i\n", classic_button_names[n], key);
+				fputs(debugBuffer,stdout);
 			}
 		}
-		
-		
-		
-		/*
-		if ( init > 0 && !data0.stick_x && !data0.stick_y ) {
-			data0 = data;		// Save initial values
-			last = data;
-			--init;
-			continue;	
+		else
+		{
+			continue;
 		}
-
-		need_sync = 0;
-		if ( abs(data.stick_x - data0.stick_x) > 2 
-		  || abs(data.stick_y - data0.stick_y) > 2 ) {
-			rel_x = curve(data.stick_x - data0.stick_x);
-			rel_y = curve(data.stick_y - data0.stick_y);
-			if ( rel_x || rel_y ) {
-				uinput_movement(fd,rel_x,-rel_y);
-				need_sync = 1;
-			}
-		}
-
-		need_sync = 1;
 		
-		if ( need_sync )
-			uinput_syn(fd);
-		*/
 	}
 
-	putchar('\n');
-	uinput_close(fd);
-	i2c_close();
+	if(f_debug)
+	{
+		puts("Closing.\n");
+	}	
 
+	fifo_close("/dev/toot_mcu_fifo");
+	i2c_close();
 }

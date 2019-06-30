@@ -1,8 +1,9 @@
 DESCRIPTION = "The OTTO core software."
 HOMEPAGE = "https://github.com/topisani/OTTO"
 
-SRCREV = "51ed8110dbf639ff7abc298f00352f20b1f6aa87"
-SRC_URI = "git://github.com/adorbs/OTTO;branch=feature/rpi-cleanup"
+SRCREV = "48a3007c8e15835cd7cdc0cc0f421c984cef103c"
+SRC_URI = "git://github.com/adorbs/OTTO;branch=adorbs-develop"
+# SRC_URI = "git:///home/adorbs/OTTO/;protocol=file;branch=adorbs-develop"
 PV = "1.0.0+git${SRCPV}"
 
 LICENSE = "MPL-2.0"
