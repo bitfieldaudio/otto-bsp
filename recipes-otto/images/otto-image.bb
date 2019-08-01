@@ -37,6 +37,9 @@ IMAGE_INSTALL += "kernel-modules \
 			    openssh \
 "
 
+# Add Extra 100 MB for ???
+IMAGE_ROOTFS_EXTRA_SPACE = "102400"
+
 LICENSE = "MIT"
 
 ### If not using the fonts in the otto-core data dir, then add ttf-roboto to IMAGE_INSTALL
