@@ -26,6 +26,15 @@ IMAGE_INSTALL += "kernel-modules \
 				otto-input \
 				openocd \
 				toot-mcu-fw \
+				linux-firmware-rpidistro-bcm43430 \
+				linux-firmware-rpidistro-bcm43455 \
+				bluez-firmware-rpidistro-bcm43430a1-hcd \
+				bluez-firmware-rpidistro-bcm4345c0-hcd \
+				connman \
+			    connman-client \
+			    crda \
+			    bluez5 \
+			    openssh \
 "
 
 LICENSE = "MIT"
