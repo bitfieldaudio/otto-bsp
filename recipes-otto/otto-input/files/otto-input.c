@@ -30,7 +30,8 @@
 static int is_signaled = 0;	/* Exit program if signaled */
 static int i2c_fd = -1;		/* Open /dev/i2c-1 device */
 static int f_debug = 0;		/* True to print debug messages */
-static int fifo_fd = -1;	/* fifo file descriptor */
+static int fifo_fd0 = -1;	/* fifo file descriptor */
+static int fifo_fd1 = -1;
 
 typedef struct input_data_t{
 	unsigned char ROW_1;
@@ -46,6 +47,11 @@ typedef struct input_data_t{
 	unsigned char ENCODER_YELLOW; // Yellow
 	unsigned char ENCODER_RED; // Red
 }input_data_t;
+
+typedef struct led_map_t{
+	unsigned char group;
+	unsigned char num;
+}led_map_t;
 
 const char * const keyNames[NUM_ROWS][NUM_COLUMNS] = 
 	{{"C1",  "C4",  "C8",    "SHIFT",   "SENDS",    "C6:R1",   "BLUE"},
@@ -66,6 +72,16 @@ const char const keyCodes[NUM_ROWS][NUM_COLUMNS] =
 	 {(3<<6)|4, (3<<6)|9, (3<<6)|14, (1<<6)|20, (1<<6)| 9, (1<<6)|19,        -1},
 	 {(2<<6)|2, (2<<6)|5, (2<<6)| 9, (1<<6)|16, (1<<6)|11, (1<<6)|15, (0<<6)| 1},
 	 {(3<<6)|5, (2<<6)|6, (3<<6)|10, (1<<6)|12, (1<<6)|10, (1<<6)|14,        -1}};
+
+const led_map_t const ledMap[NUM_ROWS][NUM_COLUMNS] = 
+	{{{1, 0}, {1, 3},  {1, 7},  {0, 2},  {0, 3}, {0, 25}, {0, 25}},
+	 {{2, 1}, {2, 6}, {2, 11},  {0, 1}, {0, 10}, {0, 11}, {0, 25}},
+	 {{2, 2}, {2, 7}, {2, 12},  {0, 0},  {0, 9}, {0, 13}, {0, 25}},
+	 {{1, 1}, {1, 4},  {1, 8},  {2, 0},  {0, 4}, {0, 12}, {0, 25}},
+	 {{2, 3}, {2, 8}, {2, 13}, {2, 15},  {0, 8}, {0, 14}, {0, 25}},
+	 {{2, 4}, {2, 9}, {2, 14}, {0, 16},  {0, 5}, {0, 15}, {0, 25}},
+	 {{1, 2}, {1, 5},  {1, 9}, {0, 17},  {0, 7}, {0, 18}, {0, 25}},
+	 {{2, 5}, {1, 6}, {2, 10}, {0, 20},  {0, 6}, {0, 19}, {0, 25}}};	
 
 const char * const encoderNames[NUM_ENCODERS] =
 	{"BLUE", "GREEN", "YELLOW", "RED"};
@@ -139,6 +155,93 @@ static int input_read(input_data_t* data)
 
 	msgset.msgs = iomsgs;
 	msgset.nmsgs = 1;
+
+	rc = ioctl(i2c_fd,I2C_RDWR,&msgset);
+	if ( rc < 0 )
+		return -1;		/* I/O error */
+
+	timed_wait(0,200,0);		/* Give MCU Time */
+
+	/*
+	 * Read 12 bytes
+	 */
+	iomsgs[0].addr = I2C_SLAVE_ADDR; /* i2c address */
+	iomsgs[0].flags = I2C_M_RD;		 /* Read */
+	iomsgs[0].buf = (char *)data;	 /* Receive buf */
+	iomsgs[0].len = REPORT_BYTES;	 /* 12 bytes */
+
+	msgset.msgs = iomsgs;
+	msgset.nmsgs = 1;
+
+	rc = ioctl(i2c_fd,I2C_RDWR,&msgset);
+	if ( rc < 0 )
+		return -1;			/* Failed */
+	
+	return 0;
+}
+
+static led_map_t getLEDMapFromKey(char keycode)
+{
+	int i, j;
+	if (f_debug)
+	{
+		printf("Keycode: 0x%02x\n", keycode);
+	}
+	for (i=0; i<NUM_ROWS; i++)
+	{
+		for (j=0; j<NUM_COLUMNS; j++)
+		{
+			if (keycode == keyCodes[i][j])
+			{
+				if (f_debug)
+				{
+					printf("LED Group: 0x%02x, Num: 0x%02x\n", ledMap[i][j].group, ledMap[i][j].num);
+				}
+				return ledMap[i][j];
+			}
+		}
+	}
+	if (f_debug)
+	{
+		puts("No matching LED found.\n");
+	}
+	return (led_map_t) {0,25}; // no matching LED found
+}
+
+/*
+ * Send Command
+ */
+static int processCommand(char* command, input_data_t* data)
+{
+	struct i2c_rdwr_ioctl_data msgset;
+	struct i2c_msg iomsgs[1];
+	char outBuf[16];
+	led_map_t led;
+	int rc;
+
+	iomsgs[0].addr = I2C_SLAVE_ADDR; /* i2c address */
+	iomsgs[0].flags = 0;			 /* Write */
+	iomsgs[0].buf = outBuf;			 /* Transmit buf */
+	msgset.msgs = iomsgs;
+	msgset.nmsgs = 1;
+
+	switch(command[0])
+	{
+		case 0xEC:
+			led = getLEDMapFromKey(command[1]);
+			outBuf[0] = 0x01;
+			outBuf[1] = led.group;
+			outBuf[2] = led.num;
+			outBuf[3] = command[2]; // r
+			outBuf[4] = command[3]; // g
+			outBuf[5] = command[4]; // b
+			iomsgs[0].len = 6;
+			break;
+		default:
+			outBuf[0] = 0x00;
+			iomsgs[0].len = 1;
+			break;
+	}
 
 	rc = ioctl(i2c_fd,I2C_RDWR,&msgset);
 	if ( rc < 0 )
@@ -275,7 +378,7 @@ static int generateReport(input_data_t* now, input_data_t* last, char* buffer, c
 	return numBytes;
 }
 
-static void fifo_init(const char *node) 
+static void fifo_init(const char *node, int* fd, int oflag) 
 {
 	int status;
 
@@ -286,19 +389,50 @@ static void fifo_init(const char *node)
 		abort();
 	}
 
-	fifo_fd = open(node, O_RDWR);
+	*fd = open(node, oflag);
 
-	if ( fifo_fd < 0 ) {
+	if ( *fd < 0 ) {
 		perror("Error opening FIFO");
 		abort();
 	}
 }
 
-static void fifo_close(const char *node)
+static void fifo_close(int* fd)
 {
-	close(fifo_fd);
-	fifo_fd = -1;
+	close(*fd);
+	*fd = -1;
 }
+
+static int read_line_if_data(int fd, char *buf, char delim)
+{
+	int nread = read(fd, buf, 1);
+	if (nread == -1)
+	{
+		return 0;
+	}
+	else
+	{
+		while (*buf++ != delim)
+		{
+			nread = read(fd, buf, 1);
+			if (nread == -1)
+			{
+				*buf = '\0';
+				return 1;
+			}
+		}
+	}
+}
+
+static void print_hex(char* buf)
+{
+	while (*buf != '\n')
+	{
+		printf("0x%02x ",*buf++);
+	}
+	fputc('\n', stdout);
+}
+
 /*
  * Main program :
  */
@@ -307,12 +441,16 @@ void main(int argc,char **argv)
 	input_data_t inputState, prevState;
 	char debugBuffer[256];
 	char reportBuffer[256];
+	char commandBuffer[256];
 	int reportBytes = 0;
+	int commandCheck = 0;
 
 	if ( argc > 1 && !strcmp(argv[1],"-d") )
 		f_debug = 1;				/* Enable debug messages */
 
-	fifo_init("/dev/toot-mcu-fifo");
+	fifo_init("/dev/toot-mcu-fifo0", &fifo_fd0, O_RDWR);
+	fifo_init("/dev/toot-mcu-fifo1", &fifo_fd1, O_RDWR);
+	fcntl(fifo_fd1, F_SETFL, O_NONBLOCK);
 	i2c_init("/dev/i2c-1");			/* Open I2C controller */
 
 	signal(SIGINT,sigint_handler);	/* Trap on SIGINT */
@@ -325,13 +463,24 @@ void main(int argc,char **argv)
 		timed_wait(0,16666,0); // 60 Hz Refresh
 		
 		copy_input_data(&inputState, &prevState);
-		
-		while (!is_signaled & ( input_read(&inputState) < 0 )) {}
-		
+		commandCheck = read_line_if_data(fifo_fd1, commandBuffer, '\n');
+		if (commandCheck)
+		{
+			if (f_debug)
+			{
+				print_hex(commandBuffer);
+			}
+			while (!is_signaled & (processCommand(commandBuffer, &inputState) < 0 )) {}
+		}
+		else 
+		{
+			while (!is_signaled & (input_read(&inputState) < 0 )) {}
+		}
+
 		if ( inputChange(&inputState, &prevState) )
 		{
 			reportBytes = generateReport(&inputState, &prevState, reportBuffer, debugBuffer);
-			write(fifo_fd, reportBuffer, reportBytes);
+			write(fifo_fd0, reportBuffer, reportBytes);
 
 			if ( f_debug )
 			{
@@ -342,7 +491,6 @@ void main(int argc,char **argv)
 		{
 			continue;
 		}
-		
 	}
 
 	if(f_debug)
@@ -350,6 +498,9 @@ void main(int argc,char **argv)
 		puts("Closing.\n");
 	}	
 
-	fifo_close("/dev/toot_mcu_fifo");
+	fifo_close(&fifo_fd0);
+	remove("/dev/toot-mcu-fifo0");
+	fifo_close(&fifo_fd1);
+	remove("/dev/toot-mcu-fifo1");
 	i2c_close();
 }

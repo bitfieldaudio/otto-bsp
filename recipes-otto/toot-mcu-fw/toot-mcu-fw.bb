@@ -5,7 +5,7 @@ HOMEPAGE = "https://github.com/adorbs/toot-mcu-fw"
 LICENSE = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
-SRC_URI = "https://github.com/adorbs/toot-mcu-fw/releases/download/v0.0.1/toot-mcu-fw.elf \
+SRC_URI = "https://github.com/adorbs/toot-mcu-fw/releases/download/v0.0.2/toot-mcu-fw.elf \
 		file://load-toot-mcu-fw.sh \
 		file://openocd.cfg \
 		file://LICENSE"
