@@ -35,6 +35,8 @@ IMAGE_INSTALL += "kernel-modules \
 			    crda \
 			    bluez5 \
 			    openssh \
+			    mingetty \
+			    otto-startup \
 "
 
 # Add Extra 100 MB for ???

@@ -1,9 +1,6 @@
-# Recipe created by recipetool
-# This is the basis of a recipe and may need further editing in order to be fully functional.
-# (Feel free to remove these comments when editing.)
+DESCRIPTION ?= "FBCP for Raspberry Pi"
+SUMMARY = "Framebuffer Copy application"
 
-# WARNING: the following LICENSE and LIC_FILES_CHKSUM values are best guesses - it is
-# your responsibility to verify that the values are complete and correct.
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=20cd56e60f87e0c4ddd2b6b2d6241e6f"
 
@@ -21,7 +18,7 @@ inherit pkgconfig cmake update-rc.d
 
 INITSCRIPT_PACKAGES = "${PN}"
 INITSCRIPT_NAME_${PN} = "${PN}.sh"
-INITSCRIPT_PARAMS_${PN} = "start 8 5 . stop 21 0 1 6 ."
+INITSCRIPT_PARAMS_${PN} = "start 1 2 3 4 5 . stop 21 0 1 6 ."
 
 # Specify any options you want to pass to cmake using EXTRA_OECMAKE:
 EXTRA_OECMAKE = ""
