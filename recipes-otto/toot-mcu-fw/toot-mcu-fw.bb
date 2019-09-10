@@ -13,8 +13,8 @@ SRC_URI[elf.md5sum] = "3cc5245be23070cd04a9c474b280b05b"
 
 S = "${WORKDIR}"
 
-# we don't need a compiler nor a c library for these files
-INHIBIT_DEFAULT_DEPS = "1"
+# we don't need a compiler nor a c library for these files, but install uses objcopy
+# INHIBIT_DEFAULT_DEPS = "1"
 
 FILES_${PN} = "/home/root/${PN}/* \
 "
