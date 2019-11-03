@@ -1,0 +1,20 @@
+[submodule "sources/meta-clang"]
+	path = sources/meta-clang
+	url = https://github.com/kraj/meta-clang.git
+	branch = warrior
+[submodule "sources/meta-raspberrypi"]
+	path = sources/meta-raspberrypi
+	url = https://git.yoctoproject.org/git/meta-raspberrypi
+	branch = warrior
+[submodule "sources/meta-openembedded"]
+	path = sources/meta-openembedded
+	url = https://github.com/openembedded/meta-openembedded.git
+	branch = warrior
+[submodule "sources/poky"]
+	path = sources/poky
+	url = https://git.yoctoproject.org/git/poky
+	branch = warrior
+[submodule "sources/meta-otto"]
+	path = sources/meta-otto
+	url = https://github.com/adorbs/meta-otto.git
+	branch = warrior
