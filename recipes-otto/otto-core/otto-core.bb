@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-DEPENDS = "glfw alsa-lib userland"
+DEPENDS = "alsa-lib userland"
 TOOLCHAIN = "clang"
 
 S = "${WORKDIR}/git"

@@ -8,7 +8,7 @@ SRC_URI = "file://rpi-fbcp.zip \
 		file://rpi-fbcp.sh \
 		"
 
-DEPENDS = "virtual/libgles2"
+DEPENDS = "virtual/libgles2 userland"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
