@@ -1,0 +1,1 @@
+EXTRA_OECMAKE += "-DLLVM_ENABLE_PROJECTS='clang;lld'"
