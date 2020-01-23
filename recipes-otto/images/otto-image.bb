@@ -14,7 +14,7 @@ real-time test suite and tools appropriate for real-time use."
 # qemuwrapper-cross is needed in DEPENDS to fix error with font cache update
 DEPENDS = "linux-raspberrypi-rt qemuwrapper-cross"
 
-IMAGE_FEATURES += "splash"
+IMAGE_FEATURES += "splash tools-debug"
 
 IMAGE_INSTALL += "kernel-modules \
 				rt-tests \
@@ -39,8 +39,8 @@ IMAGE_INSTALL += "kernel-modules \
 			    otto-startup \
 "
 
-# Add Extra 100 MB for ???
-IMAGE_ROOTFS_EXTRA_SPACE = "102400"
+# Add Extra 500 MB for ???
+IMAGE_ROOTFS_EXTRA_SPACE = "512000"
 
 LICENSE = "MIT"
 
