@@ -20,9 +20,10 @@ inherit cmake pkgconfig
 # Allow cmake access to host utilities because it needs git
 OECMAKE_FIND_ROOT_PATH_MODE_PROGRAM = "BOTH"
 
-EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1 -DCMAKE_BUILD_TYPE=Debug"
+EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1"
 
-FILES_${PN} += "/home/root/otto/otto \
+FILES_${PN} += " \
+        /home/root/otto/otto \
         /home/root/otto/otto-tests \
 				/home/root/otto/data/* \
 "
