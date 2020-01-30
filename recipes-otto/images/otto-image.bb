@@ -31,12 +31,14 @@ IMAGE_INSTALL += "kernel-modules \
 				bluez-firmware-rpidistro-bcm43430a1-hcd \
 				bluez-firmware-rpidistro-bcm4345c0-hcd \
 				connman \
-			    connman-client \
-			    crda \
-			    bluez5 \
-			    openssh \
-			    mingetty \
-			    otto-startup \
+		    connman-client \
+		    crda \
+		    bluez5 \
+		    openssh \
+		    mingetty \
+		    otto-startup \
+        valgrind \
+        fbi \
 "
 
 # Add Extra 500 MB for ???

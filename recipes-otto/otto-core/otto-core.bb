@@ -10,8 +10,9 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-DEPENDS = "virtual/libgles2 alsa-lib userland"
-TOOLCHAIN = "clang"
+#DEPENDS = "virtual/libgles2 alsa-lib userland libcxx compiler-rt libunwind"
+DEPENDS = "virtual/libgles2 alsa-lib userland valgrind dbus libdbus-c++"
+#TOOLCHAIN = "gcc"
 
 S = "${WORKDIR}/git"
 
@@ -21,6 +22,8 @@ inherit cmake pkgconfig
 OECMAKE_FIND_ROOT_PATH_MODE_PROGRAM = "BOTH"
 
 EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1"
+# This flag is also propagated to CXXFLAGS
+TARGET_CFLAGS += "-Wno-psabi"
 
 FILES_${PN} += " \
         /home/root/otto/otto \
