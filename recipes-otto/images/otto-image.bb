@@ -38,8 +38,9 @@ IMAGE_INSTALL += "kernel-modules \
 		    mingetty \
 		    otto-startup \
         valgrind \
-        fbi \
 "
+#        fbi \
+#
 
 # Add Extra 500 MB for ???
 IMAGE_ROOTFS_EXTRA_SPACE = "512000"
