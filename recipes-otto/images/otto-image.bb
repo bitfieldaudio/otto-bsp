@@ -20,12 +20,9 @@ IMAGE_INSTALL += "kernel-modules \
 				rt-tests \
 				hwlatdetect \
 				rpi-fbcp \
-				otto-core \
 				alsa-utils \
 				i2c-tools \
-				otto-input \
 				openocd \
-				toot-mcu-fw \
 				linux-firmware-rpidistro-bcm43430 \
 				linux-firmware-rpidistro-bcm43455 \
 				bluez-firmware-rpidistro-bcm43430a1-hcd \
@@ -37,10 +34,11 @@ IMAGE_INSTALL += "kernel-modules \
 		    openssh \
 		    mingetty \
 		    otto-startup \
+				otto-mcu-fw \
+				otto-core \
         valgrind \
 "
-#        fbi \
-#
+#fbi 
 
 # Add Extra 500 MB for ???
 IMAGE_ROOTFS_EXTRA_SPACE = "512000"

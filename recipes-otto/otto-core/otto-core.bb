@@ -12,7 +12,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 #DEPENDS = "virtual/libgles2 alsa-lib userland libcxx compiler-rt libunwind"
 DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libdbus-c++"
-#TOOLCHAIN = "gcc"
+TOOLCHAIN = "clang"
 
 S = "${WORKDIR}/git"
 
@@ -23,7 +23,7 @@ OECMAKE_FIND_ROOT_PATH_MODE_PROGRAM = "BOTH"
 
 EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1"
 # This flag is also propagated to CXXFLAGS
-TARGET_CFLAGS += "-Wno-psabi"
+#TARGET_CFLAGS += "-Wno-psabi"
 
 FILES_${PN} += " \
         /home/root/otto/otto \
