@@ -774,7 +774,7 @@ index 0d974738c1c4..b74b1ae475a4 100644
 +		.name = "r61505w",
 +		.spi = &(struct spi_board_info) {
 +			.modalias = "fb_r61505w",
-+			.max_speed_hz = 32000000,
++			.max_speed_hz = 48000000,
 +			.mode = SPI_MODE_3,
 +			.platform_data = &(struct fbtft_platform_data) {
 +				.display = {

@@ -12,7 +12,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 #DEPENDS = "virtual/libgles2 alsa-lib userland libcxx compiler-rt libunwind"
 DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libdbus-c++"
-TOOLCHAIN = "clang"
+#TOOLCHAIN = "clang"
 
 S = "${WORKDIR}/git"
 
@@ -28,13 +28,13 @@ EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1"
 FILES_${PN} += " \
         /home/root/otto/otto \
         /home/root/otto/otto-tests \
-				/home/root/otto/data/* \
 "
+# /home/root/otto/data/* 
 
 do_install_append () {
 	install -d ${D}/home/root/otto
 	install -m 0755 bin/otto ${D}/home/root/otto/
 	install -m 0755 bin/test ${D}/home/root/otto/otto-tests
-	install -d ${D}/home/root/otto/data
-	cp -r ${S}/data/* ${D}/home/root/otto/data/
+	# install -d ${D}/home/root/otto/data
+	# cp -r ${S}/data/* ${D}/home/root/otto/data/
 }
