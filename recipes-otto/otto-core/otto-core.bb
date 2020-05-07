@@ -26,15 +26,16 @@ EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1"
 #TARGET_CFLAGS += "-Wno-psabi"
 
 FILES_${PN} += " \
-        /home/root/otto/otto \
-        /home/root/otto/otto-tests \
+        /data/bin/otto \
+        /data/bin/otto-tests \
+        /data/data/* \
 "
-# /home/root/otto/data/* 
 
 do_install_append () {
-	install -d ${D}/home/root/otto
-	install -m 0755 bin/otto ${D}/home/root/otto/
-	install -m 0755 bin/test ${D}/home/root/otto/otto-tests
-	# install -d ${D}/home/root/otto/data
-	# cp -r ${S}/data/* ${D}/home/root/otto/data/
+	install -d ${D}/data
+	install -d ${D}/data/bin
+	install -m 0755 bin/otto ${D}/data/bin/otto
+	install -m 0755 bin/test ${D}/data/bin/otto-tests
+	install -d ${D}/data/data
+	cp -r ${S}/data/* ${D}/data/data
 }
