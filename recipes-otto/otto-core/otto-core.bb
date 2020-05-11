@@ -31,6 +31,8 @@ FILES_${PN} += " \
         /data/data/* \
 "
 
+#INSTALL_PREFIX = "${@bb.utils.contains('PACKAGECONFIG', '')}"
+
 do_install_append () {
 	install -d ${D}/data
 	install -d ${D}/data/bin

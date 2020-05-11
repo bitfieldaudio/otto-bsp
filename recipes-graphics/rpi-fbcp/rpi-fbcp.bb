@@ -24,8 +24,8 @@ INITSCRIPT_PARAMS_${PN} = "start 1 2 3 4 5 . stop 21 0 1 6 ."
 EXTRA_OECMAKE = ""
 
 do_install() {
-    install -d ${D}${bindir}
-    install -m 0755 fbcp ${D}${bindir}
+  install -d ${D}${bindir}
+  install -m 0755 fbcp ${D}${bindir}
 	install -d ${D}${sysconfdir}/init.d/
 	install -m 0755 ${WORKDIR}/rpi-fbcp.sh ${D}${sysconfdir}/init.d/
 }

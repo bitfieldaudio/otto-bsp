@@ -17,12 +17,16 @@ S = "${WORKDIR}"
 # we don't need a compiler nor a c library for these files, but install uses objcopy
 # INHIBIT_DEFAULT_DEPS = "1"
 
-FILES_${PN} = "/home/root/${PN}/* \
-"
+FILES_${PN} = "/home/root/${PN}/*"
 
 do_install() {
     install -d ${D}/home/root/${PN}
     install -m 0755 otto-mcu-fw.elf ${D}/home/root/${PN}/
     install -m 0755 load-otto-mcu-fw.sh ${D}/home/root/${PN}/
     install -m 0755 openocd.cfg ${D}/home/root/${PN}/
+    sed -i "s/<SWCLK>/${OPENOCD_SWCLK_PIN}/g;s/<SWDIO>/${OPENOCD_SWDIO_PIN}/g;s/<SRST>/${OPENOCD_SRST_PIN}/g" \
+      ${D}/home/root/${PN}/openocd.cfg
 }
+
+# TODO: Hopefully get an answer to this SO question: https://stackoverflow.com/q/61673614/5144291
+# Then this can be configured from the machine instead

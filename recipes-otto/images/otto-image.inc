@@ -23,10 +23,9 @@ IMAGE_INSTALL += "kernel-modules \
 		    crda \
         otto-startup \
         otto-core \
+        otto-mcu-fw \
+        rpi-fbcp \
 "
-#rpi-fbcp \
-#otto-mcu-fw \
-#otto-core \
 #rt-tests
 #hwlatdetect
 #bluez5
@@ -51,7 +50,9 @@ do_add_startup_modules () {
 tty1::respawn:/bin/login -f root </dev/tty1 >/dev/tty1 2>&1 
 ttyS0::respawn:/bin/login -f root </dev/ttyS0 >/dev/ttyS0 2>&1 
 EOF
+  install -d ${IMAGE_ROOTFS}/etc/rcS.d
+  ln -s ../rpi-fbcp.sh ${IMAGE_ROOTFS}/etc/rcS.d/
   mkdir -p ${IMAGE_ROOTFS}/data
 }
 
-
+# vim: ft=sh
