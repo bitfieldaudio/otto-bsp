@@ -1,4 +1,4 @@
-From 3595283b8e1d47d7a2fdbf2d945d4ecf3afa2438 Mon Sep 17 00:00:00 2001
+From e3d4ae5a0a52105c0dc2b1f368f8aaf6df283044 Mon Sep 17 00:00:00 2001
 From: adorbs <adorbsmusic@gmail.com>
 Date: Sun, 28 Apr 2019 18:28:27 -0700
 Subject: [PATCH] add r61505w and hx8347h drivers
@@ -19,18 +19,18 @@ Subject: [PATCH] add r61505w and hx8347h drivers
  create mode 100644 drivers/staging/fbtft/fb_r61505w.c
 
 diff --git a/arch/arm/boot/dts/overlays/Makefile b/arch/arm/boot/dts/overlays/Makefile
-index a2ee8adc5a3f..882dc50aec74 100644
+index 5b8ea9ec61e5..673590666527 100644
 --- a/arch/arm/boot/dts/overlays/Makefile
 +++ b/arch/arm/boot/dts/overlays/Makefile
-@@ -49,6 +49,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
- 	hifiberry-dacplus.dtbo \
+@@ -56,6 +56,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
+ 	hifiberry-dacplusadcpro.dtbo \
  	hifiberry-digi.dtbo \
  	hifiberry-digi-pro.dtbo \
 +	hx8347h.dtbo \
  	hy28a.dtbo \
  	hy28b.dtbo \
  	hy28b-2017.dtbo \
-@@ -114,6 +115,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
+@@ -136,6 +137,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
  	rpi-sense.dtbo \
  	rpi-tv.dtbo \
  	rra-digidac1-wm8741-audio.dtbo \
@@ -173,7 +173,7 @@ index 000000000000..88e9286f49fe
 +	};
 +};
 diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
-index dba676761d72..f9ef1ad42e66 100644
+index 84b2e7ebc024..88e9e1f48a45 100644
 --- a/drivers/staging/fbtft/Kconfig
 +++ b/drivers/staging/fbtft/Kconfig
 @@ -33,6 +33,12 @@ config FB_TFT_HX8347D
@@ -463,7 +463,7 @@ index 000000000000..75627341c07d
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/staging/fbtft/fb_r61505w.c b/drivers/staging/fbtft/fb_r61505w.c
 new file mode 100644
-index 000000000000..ee93dafc0c28
+index 000000000000..f7d3590645d9
 --- /dev/null
 +++ b/drivers/staging/fbtft/fb_r61505w.c
 @@ -0,0 +1,245 @@
@@ -586,7 +586,7 @@ index 000000000000..ee93dafc0c28
 +    write_reg(par, 0x0003, 0x0030 | (par->bgr << 12));
 +    mdelay(20); 
 +   
-+   	// External Display Interface Control 1
++	// External Display Interface Control 1
 +    write_reg(par, 0x000C, 0x0000);   //External Display Interface Control 1 (R0Ch)0x0000  changed by phl 070103   
 +    // External Display Interface Control 2
 +    write_reg(par, 0x000F, 0x0000); //External Display Interface Control 2 (R0Fh)   
@@ -713,10 +713,10 @@ index 000000000000..ee93dafc0c28
 +MODULE_AUTHOR("Steven Hang");
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/staging/fbtft/fbtft_device.c b/drivers/staging/fbtft/fbtft_device.c
-index 0d974738c1c4..b74b1ae475a4 100644
+index 50e97da993e7..14ef86e12da3 100644
 --- a/drivers/staging/fbtft/fbtft_device.c
 +++ b/drivers/staging/fbtft/fbtft_device.c
-@@ -581,6 +581,24 @@ static struct fbtft_device_display displays[] = {
+@@ -577,6 +577,24 @@ static struct fbtft_device_display displays[] = {
  				},
  			}
  		}
@@ -741,7 +741,7 @@ index 0d974738c1c4..b74b1ae475a4 100644
  	}, {
  		.name = "hx8353d",
  		.spi = &(struct spi_board_info) {
-@@ -643,6 +661,24 @@ static struct fbtft_device_display displays[] = {
+@@ -639,6 +657,24 @@ static struct fbtft_device_display displays[] = {
  				.gamma = HY28B_GAMMA,
  			}
  		}
@@ -766,7 +766,7 @@ index 0d974738c1c4..b74b1ae475a4 100644
  	}, {
  		.name = "ili9481",
  		.spi = &(struct spi_board_info) {
-@@ -928,6 +964,24 @@ static struct fbtft_device_display displays[] = {
+@@ -916,6 +952,24 @@ static struct fbtft_device_display displays[] = {
  				},
  			}
  		}

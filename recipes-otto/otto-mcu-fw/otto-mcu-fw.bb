@@ -26,6 +26,7 @@ do_install() {
     install -m 0755 openocd.cfg ${D}/home/root/${PN}/
     sed -i "s/<SWCLK>/${OPENOCD_SWCLK_PIN}/g;s/<SWDIO>/${OPENOCD_SWDIO_PIN}/g;s/<SRST>/${OPENOCD_SRST_PIN}/g" \
       ${D}/home/root/${PN}/openocd.cfg
+    sed -i "s/<MCU_TYPE>/${OPENOCD_MCU_TYPE}/g" ${D}/home/root/${PN}/load-otto-mcu-fw.sh
 }
 
 # TODO: Hopefully get an answer to this SO question: https://stackoverflow.com/q/61673614/5144291

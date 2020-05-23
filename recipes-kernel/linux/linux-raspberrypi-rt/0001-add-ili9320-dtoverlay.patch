@@ -1,36 +1,25 @@
-From a47e2be8eda1b74cc85a055483c75d5063d14d11 Mon Sep 17 00:00:00 2001
+From b642c19597af16599618a056d3919d3223e99ce7 Mon Sep 17 00:00:00 2001
 From: adorbs <adorbsmusic@gmail.com>
 Date: Fri, 12 Apr 2019 00:19:30 -0700
 Subject: [PATCH] add ili9320 dtoverlay
 
 ---
- arch/arm/boot/dts/overlays/Makefile           |  9 +++
+ arch/arm/boot/dts/overlays/Makefile           |  3 +
  .../arm/boot/dts/overlays/ili9320-overlay.dts | 62 +++++++++++++++++++
- 2 files changed, 71 insertions(+)
+ 2 files changed, 65 insertions(+)
  create mode 100644 arch/arm/boot/dts/overlays/ili9320-overlay.dts
 
 diff --git a/arch/arm/boot/dts/overlays/Makefile b/arch/arm/boot/dts/overlays/Makefile
-index 87082d64302d..0885d182b233 100644
+index 87082d64302d..5b8ea9ec61e5 100644
 --- a/arch/arm/boot/dts/overlays/Makefile
 +++ b/arch/arm/boot/dts/overlays/Makefile
-@@ -74,11 +74,20 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
- 	i2c3.dtbo \
- 	i2c4.dtbo \
- 	i2c5.dtbo \
-+<<<<<<< found
- 	i2c6.dtbo \
- 	i2s-gpio28-31.dtbo \
+@@ -79,6 +79,9 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
  	ilitek251x.dtbo \
  	imx219.dtbo \
  	iqaudio-codec.dtbo \
-+||||||| expected
-+	i2c1-bcm2708.dtbo \
-+	i2s-gpio28-31.dtbo \
-+=======
 +	i2c1-bcm2708.dtbo \
 +	i2s-gpio28-31.dtbo \
 +	ili9320.dtbo \
-+>>>>>>> replacement
  	iqaudio-dac.dtbo \
  	iqaudio-dacplus.dtbo \
  	iqaudio-digi-wm8804-audio.dtbo \
@@ -102,6 +91,3 @@ index 000000000000..daec4fe9ff91
 +		debug =		<&ili9320>,"debug:0";
 +	};
 +};
--- 
-2.25.0
-

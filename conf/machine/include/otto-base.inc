@@ -23,10 +23,7 @@ RPI_KERNEL_DEVICETREE_OVERLAYS_remove = "\
     overlays/vc4-kms-v3d.dtbo \
 "
 
-RPI_KERNEL_DEVICETREE_OVERLAYS += "\
-    overlays/fe-pi-audio.dtbo \
-    overlays/r61505w.dtbo \
-"
+RPI_KERNEL_DEVICETREE_OVERLAYS = ""
 
 SPLASH = "psplash"
 
