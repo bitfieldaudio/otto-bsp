@@ -11,19 +11,22 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 #DEPENDS = "virtual/libgles2 alsa-lib userland libcxx compiler-rt libunwind"
-DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libdbus-c++"
+DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libexecinfo libskia-staticdev"
 #TOOLCHAIN = "clang"
 
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
+# Do not remove debug symbols
+INHIBIT_PACKAGE_STRIP = "1"
+INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 
 # Allow cmake access to host utilities because it needs git
 OECMAKE_FIND_ROOT_PATH_MODE_PROGRAM = "BOTH"
 
-EXTRA_OECMAKE += "-DOTTO_BOARD=rpi-proto-1"
+EXTRA_OECMAKE += "-DOTTO_BOARD=${OTTO_BOARD} -DCMAKE_BUILD_TYPE=Debug"
 # This flag is also propagated to CXXFLAGS
-#TARGET_CFLAGS += "-Wno-psabi"
+TARGET_CFLAGS += "-Wno-psabi"
 
 FILES_${PN} += " \
         /data/bin/otto \
