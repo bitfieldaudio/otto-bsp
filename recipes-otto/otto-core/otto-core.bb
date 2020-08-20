@@ -18,13 +18,14 @@ S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
 # Do not remove debug symbols
-INHIBIT_PACKAGE_STRIP = "1"
-INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
+#INHIBIT_PACKAGE_STRIP = "1"
+#INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 
 # Allow cmake access to host utilities because it needs git
 OECMAKE_FIND_ROOT_PATH_MODE_PROGRAM = "BOTH"
 
-EXTRA_OECMAKE += "-DOTTO_BOARD=${OTTO_BOARD} -DCMAKE_BUILD_TYPE=Debug"
+EXTRA_OECMAKE += "-DOTTO_BOARD=${OTTO_BOARD}"
+# EXTRA_OECMAKE += "-DCMAKE_BUILD_TYPE=Debug"
 # This flag is also propagated to CXXFLAGS
 TARGET_CFLAGS += "-Wno-psabi"
 

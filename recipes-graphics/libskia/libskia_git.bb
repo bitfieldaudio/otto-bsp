@@ -11,11 +11,13 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=822f02cc7736281816581cd064afbb1c \
                     file://modules/pathkit/npm-asmjs/LICENSE;md5=d25bb58a1be2e1af9b58d31565a206dc \
                     file://modules/pathkit/npm-wasm/LICENSE;md5=d25bb58a1be2e1af9b58d31565a206dc"
 
-SRC_URI = "git://skia.googlesource.com/skia.git;protocol=https"
-
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
 SRCREV = "a09b05c27ad2051bb477f61d8e9d8c1352274430"
+
+SRC_URI = "git://skia.googlesource.com/skia.git;protocol=https"
+S = "${WORKDIR}/git"
+B = "${S}/out/Release"
 
 require gn-utils.inc
 
@@ -96,7 +98,7 @@ do_fetch_third_party() {
   cd ${S}
   python tools/git-sync-deps
 }
-addtask fetch_third_party before do_patch
+addtask fetch_third_party after do_patch before do_configure
 
 do_configure() {
   cd ${S}
