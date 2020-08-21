@@ -1,0 +1,1 @@
+EXTRA_OECONF_append = " --enable-bcm2835gpio"
