@@ -31,6 +31,7 @@ GN_ARGS = " \
 is_component_build=false \
 is_debug=true \
 is_official_build=false \
+is_clang=false \
 "
 
 # Toolchains we will use for the build. We need to point to the toolchain file
@@ -94,19 +95,29 @@ skia_use_zlib=false \
 skia_use_egl=true \
 "
 
+EXTRA_BIN="${WORKDIR}/extra-bin"
+
 do_fetch_third_party() {
   cd ${S}
+
+  # An alias is not enough, it makes is_clang.py fail.
+  mkdir -p ${EXTRA_BIN}
+  [ -e ${EXTRA_BIN}/python ] && rm ${EXTRA_BIN}/python
+  ln -s $(which python2) ${EXTRA_BIN}/python
+  export PATH="${EXTRA_BIN}:$PATH"
+
   python tools/git-sync-deps
 }
 addtask fetch_third_party after do_patch before do_configure
 
 do_configure() {
   cd ${S}
+  export PATH="${EXTRA_BIN}:$PATH"
   ./bin/gn gen '--args=${GN_ARGS} ${@get_toolchain_args(d)}' "${B}"
 }
 
 do_compile() {
-  echo "CXX: ${CXX}"
+  export PATH="${EXTRA_BIN}:$PATH"
   ninja -v ${PARALLEL_MAKE} -C "${B}"
 }
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
