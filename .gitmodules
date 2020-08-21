@@ -14,7 +14,3 @@
 	path = sources/poky
 	url = https://git.yoctoproject.org/git/poky
 	branch = zeus
-[submodule "sources/meta-otto"]
-	path = sources/meta-otto
-	url = https://github.com/adorbs/meta-otto.git
-	branch = zeus
