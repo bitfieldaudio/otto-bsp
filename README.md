@@ -26,7 +26,7 @@ This image can be flashed to your SD card with the following command (where /dev
 ```
 sudo dd if=tmp/deploy/images/otto-beta-v0.1.0/otto-image-dev-otto-beta-v0.1.0.wic of=/dev/sdX bs=1M && sync
 ```
-The `wic` tool also works with [https://github.com/intel/bmap-tools bmap] which should be faster than `dd`. You are welcome to  try this out.
+The `wic` tool also works with [bmap](https://github.com/intel/bmap-tools) which should be faster than `dd`. You are welcome to try this out.
 
 # Getting started without an existing Linux system
 If you do not already have a linux system available for development, the Yocto project has been tested to work on Ubuntu 20.04 on Windows Subsystem for Linux 2 (WSL2), which allow you to proceed as above.
