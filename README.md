@@ -4,7 +4,7 @@ otto-bsp is intended to provide developers of the OTTO synth an easy to setup en
 # Getting started with an existing Linux system
 If you already have a linux system available for development, the dependencies for development are as follows:
 ```
-gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat libsdl1.2-dev xterm repo
+gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat libsdl1.2-dev xterm
 ```
 
 Once those are installed, you are ready to download the source:
