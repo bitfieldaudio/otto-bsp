@@ -2,11 +2,11 @@
 
 DEFAULTTUNE ?= "cortexa7thf-neon-vfpv4"
 
+IMAGE_FSTYPES = "wic"
+WKS_FILE = "sdimage-otto.wks"
+
 require conf/machine/include/tune-cortexa7.inc
 require conf/machine/include/rpi-base.inc
-
-IMAGE_FSTYPES = "tar.bz2 ext3 wic"
-WKS_FILE = "sdimage-otto.wks"
 
 MACHINE_EXTRA_RRECOMMENDS += "\
     linux-firmware-rpidistro-bcm43430 \
