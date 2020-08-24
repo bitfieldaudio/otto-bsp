@@ -1,5 +1,5 @@
 # Description
-otto-bsp is intended to provide developers of the OTTO synth an easy to setup environment for OpenEmbedded/Yocto project development. This respository is set up with git submodules to link together all of the required BSP layers. In addition, a Vagrantfile is provided for those who do not already have Linux systems ready to quickly get started via a virtual machine.
+otto-bsp is intended to provide developers of the OTTO synth an easy to setup environment for OpenEmbedded/Yocto project development. This respository is set up with git submodules to link together all of the required BSP layers.
 
 # Getting started with an existing Linux system
 If you already have a linux system available for development, the dependencies for development are as follows:
