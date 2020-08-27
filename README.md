@@ -1,10 +1,10 @@
 # Description
-otto-bsp is intended to provide developers of the OTTO synth an easy to setup environment for OpenEmbedded/Yocto project development. This respository is set up with git submodules to link together all of the required BSP layers. In addition, a Vagrantfile is provided for those who do not already have Linux systems ready to quickly get started via a virtual machine.
+otto-bsp is intended to provide developers of the OTTO synth an easy to setup environment for OpenEmbedded/Yocto project development. This respository is set up with git submodules to link together all of the required BSP layers.
 
 # Getting started with an existing Linux system
 If you already have a linux system available for development, the dependencies for development are as follows:
 ```
-gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat libsdl1.2-dev xterm repo
+gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat libsdl1.2-dev xterm
 ```
 
 Once those are installed, you are ready to download the source:
@@ -26,7 +26,7 @@ This image can be flashed to your SD card with the following command (where /dev
 ```
 sudo dd if=tmp/deploy/images/otto-beta-v0.1.0/otto-image-dev-otto-beta-v0.1.0.wic of=/dev/sdX bs=1M && sync
 ```
-The `wic` tool also works with [https://github.com/intel/bmap-tools bmap] which should be faster than `dd`. You are welcome to  try this out.
+The `wic` tool also works with [bmap](https://github.com/intel/bmap-tools) which should be faster than `dd`. You are welcome to try this out.
 
 # Getting started without an existing Linux system
 If you do not already have a linux system available for development, the Yocto project has been tested to work on Ubuntu 20.04 on Windows Subsystem for Linux 2 (WSL2), which allow you to proceed as above.
