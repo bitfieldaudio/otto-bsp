@@ -17,15 +17,24 @@ S = "${WORKDIR}/git"
 DEPENDS = "linux-firmware-rpidistro virtual/libgles2 virtual/egl userland"
 
 inherit pkgconfig cmake update-rc.d
+# Fix some CRLF line terminators
+inherit dos2unix
 
-EXTRA_OECMAKE = "-DSPI_BUS_CLOCK_DIVISOR=6 -DST7789V=ON -DGPIO_TFT_DATA_CONTROL=-1 -DGPIO_TFT_BACKLIGHT=12 -DBACKLIGHT_CONTROL=ON"
+EXTRA_OECMAKE = "-DSPI_BUS_CLOCK_DIVISOR=6 \
+-DST7789V=ON \
+-DGPIO_TFT_DATA_CONTROL=-1 \
+-DGPIO_TFT_BACKLIGHT=12 \
+-DBACKLIGHT_CONTROL=ON \
+-DSTATISTICS=0 \
+"
 
 INITSCRIPT_PACKAGES = "${PN}"
 INITSCRIPT_NAME_${PN} = "${PN}.sh"
 INITSCRIPT_PARAMS_${PN} = "start 1 2 3 4 5 . stop 21 0 1 6 ."
 
-do_configure_prepend() {  
-  grep "target_link_libraries(fbcp-ili9341 vchostif)" ${S}/CMakeLists.txt || echo "target_link_libraries(fbcp-ili9341 vchostif)" >> ${S}/CMakeLists.txt
+do_configure_prepend() {
+  local append_line="target_link_libraries(fbcp-ili9341 vchostif)"
+  grep "$append_line" ${S}/CMakeLists.txt || echo "$append_line" >> ${S}/CMakeLists.txt
 }
 
 do_install() {
