@@ -16,7 +16,7 @@ DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libexecinfo libskia-stati
 
 S = "${WORKDIR}/git"
 
-inherit cmake pkgconfig
+inherit cmake pkgconfig update-rc.d
 # Do not remove debug symbols
 #INHIBIT_PACKAGE_STRIP = "1"
 #INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
@@ -37,11 +37,18 @@ FILES_${PN} += " \
 
 #INSTALL_PREFIX = "${@bb.utils.contains('PACKAGECONFIG', '')}"
 
-do_install_append () {
+INITSCRIPT_PACKAGES = "${PN}"
+INITSCRIPT_NAME_${PN} = "otto-core.sh"
+INITSCRIPT_PARAMS_${PN} = "start 100 2 3 4 5 . stop 1 0 1 6 ."
+
+do_install () {
 	install -d ${D}/data
 	install -d ${D}/data/bin
 	install -m 0755 bin/otto ${D}/data/bin/otto
 	install -m 0755 bin/test ${D}/data/bin/otto-tests
 	install -d ${D}/data/data
 	cp -r ${S}/data/* ${D}/data/data
+
+  install -d ${D}${sysconfdir}/init.d/
+  install -m 0755 ${FILE_DIRNAME}/files/otto-core.sh ${D}${sysconfdir}/init.d/
 }
