@@ -10,9 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-#DEPENDS = "virtual/libgles2 alsa-lib userland libcxx compiler-rt libunwind"
-DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libexecinfo libskia-staticdev"
-#TOOLCHAIN = "clang"
+DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libexecinfo libskia-staticdev ocpppp-native boost"
 
 S = "${WORKDIR}/git"
 
@@ -24,7 +22,8 @@ inherit cmake pkgconfig update-rc.d
 # Allow cmake access to host utilities because it needs git
 OECMAKE_FIND_ROOT_PATH_MODE_PROGRAM = "BOTH"
 
-EXTRA_OECMAKE += "-DOTTO_BOARD=${OTTO_BOARD}"
+EXTRA_OECMAKE += "-DOTTO_BOARD=${OTTO_BOARD} -DOTTO_USE_SYSTEM_OCPPPP=TRUE"
+EXTRA_OECMAKE += "-DCPM_SOURCE_CACHE=${WORKDIR}/cpm-cache"
 # EXTRA_OECMAKE += "-DCMAKE_BUILD_TYPE=Debug"
 # This flag is also propagated to CXXFLAGS
 TARGET_CFLAGS += "-Wno-psabi"
