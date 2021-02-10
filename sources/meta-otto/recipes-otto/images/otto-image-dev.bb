@@ -12,6 +12,7 @@ IMAGE_INSTALL += "connman"
 IMAGE_INSTALL += "connman-client"
 IMAGE_INSTALL += "dropbear"
 IMAGE_INSTALL += "gdb"
+IMAGE_INSTALL += "otto-core-tests"
 
 # Extra tools
 IMAGE_INSTALL += "valgrind"

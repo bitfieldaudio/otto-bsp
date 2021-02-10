@@ -23,6 +23,7 @@ IMAGE_INSTALL += "kernel-modules \
 		    crda \
         otto-startup \
         otto-core \
+        otto-core-data \
         otto-mcu-fw \
         fbcp-ili9341 \
 "

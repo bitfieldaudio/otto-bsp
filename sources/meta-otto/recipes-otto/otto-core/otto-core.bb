@@ -28,11 +28,12 @@ EXTRA_OECMAKE += "-DCMAKE_BUILD_TYPE=Release"
 # This flag is also propagated to CXXFLAGS
 TARGET_CFLAGS += "-Wno-psabi"
 
-FILES_${PN} += " \
-        /data/bin/otto \
-        /data/bin/otto-tests \
-        /data/data/* \
-"
+PACKAGES += "${PN}-tests"
+PACKAGES += "${PN}-data"
+
+FILES_${PN} += "/data/bin/otto"
+FILES_${PN}-tests += "/data/bin/otto-tests"
+FILES_${PN}-data += "/data/data/*"
 
 #INSTALL_PREFIX = "${@bb.utils.contains('PACKAGECONFIG', '')}"
 
