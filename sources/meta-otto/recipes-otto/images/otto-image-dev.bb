@@ -4,11 +4,14 @@ DESCRIPTION = "OTTO Linux SD card image including development tools"
 
 # Installs GDB to the image
 IMAGE_FEATURES += "tools-debug"
+# Install -dbg versions of packages
+IMAGE_FEATURES += "dbg-pkgs"
 
 # Add networking and SSH
 IMAGE_INSTALL += "connman"
 IMAGE_INSTALL += "connman-client"
 IMAGE_INSTALL += "dropbear"
+IMAGE_INSTALL += "gdb"
 
 # Extra tools
 IMAGE_INSTALL += "valgrind"

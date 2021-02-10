@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=822f02cc7736281816581cd064afbb1c \
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-SRCREV = "a09b05c27ad2051bb477f61d8e9d8c1352274430"
+SRCREV = "1ae440a3cb3c48d769d8d5fe7c95fbba818feed2"
 
 SRC_URI = "git://skia.googlesource.com/skia.git;protocol=https"
 S = "${WORKDIR}/git"
@@ -26,11 +26,12 @@ DEPENDS += " \
   virtual/libgles2 userland \
   libpng \
 "
+#RDEPENDS_${PN}-staticdev += "libpng"
 
 GN_ARGS = " \
-is_component_build=false \
-is_debug=true \
-is_official_build=false \
+is_component_build=true \
+is_debug=false \
+is_official_build=true \
 is_clang=false \
 "
 
@@ -122,31 +123,44 @@ do_compile() {
 }
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
 
+# Because libskia.so is unversioned (i.e. not libskia.so.1)
+SOLIBS = ".so"
+FILES_SOLIBSDEV = ""
+
 do_install() {
-  install -d ${D}${libdir}
-  install -m 0755 ${B}/libskia.a ${D}${libdir}/libskia.a
+  install -d ${D}/${libdir}/
+  install -m 0755 ${B}/libskia.so ${D}/${libdir}/
 
-  install -d ${D}${includedir}/skia/
+  install -d ${D}/${includedir}/skia/
 	cp -r ${S}/include ${D}${includedir}/skia/include
-  find ${D}${includedir}/skia/include/ -type f -exec chmod 0755 {} \;
+  find ${D}/${includedir}/skia/include/ -type f -exec chmod 0755 {} \;
 
+  # Get defines with `bin/gn desc out/Release/ //:skia defines`
+  # TODO: Consider automating importing these, but currently
+  # SKIA_IMPLEMENTATION=1 is filtered out manually
   install -d ${D}${datadir}/pkgconfig
   echo "
 Name: skia
-Version: ${PV}
+Version: 1
 Description: An open source 2D graphics library
 Cflags: \
   -I${includedir}/skia \
   -I${includedir}/skia/include/c \
   -I${includedir}/skia/include/core \
-  -I${includedir}/skia/include/gpu
+  -I${includedir}/skia/include/gpu \
+  -DSK_HAS_ANDROID_CODEC \
+  -DSK_R32_SHIFT=16 \
+  -DSK_GAMMA_APPLY_TO_A8 \
+  -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=1 \
+  -DGR_TEST_UTILS=1 \
+  -DSK_GL \
+  -DSK_ENABLE_DUMP_GPU \
+  -DSKVM_JIT_WHEN_POSSIBLE
 Libs: -lskia -lpng" > ${D}${datadir}/pkgconfig/skia.pc
 }
 
 RPROVIDES = ""
-PROVIDES = "libskia-staticdev"
 
-FILES_${PN}-staticdev += "${libdir}/libskia.a"
-FILES_${PN}-staticdev += "${includedir}/skia"
-FILES_${PN}-staticdev += "${datadir}/pkgconfig"
+FILES_${PN}-dev += "${includedir}/skia"
+FILES_${PN}-dev += "${datadir}/pkgconfig"
 
