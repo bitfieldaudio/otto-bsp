@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=84809983ca177c86f6b0091234e38722"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-DEPENDS = "virtual/libgles2 alsa-lib userland valgrind libexecinfo libskia boost"
+DEPENDS = "virtual/libgles2 alsa-lib userland libexecinfo libskia boost"
 
 S = "${WORKDIR}/git"
 
@@ -34,7 +34,6 @@ PACKAGES += "${PN}-data"
 FILES_${PN} += "/data/bin/otto"
 FILES_${PN}-tests += "/data/bin/otto-tests"
 FILES_${PN}-data += "/data/data/*"
-
 #INSTALL_PREFIX = "${@bb.utils.contains('PACKAGECONFIG', '')}"
 
 INITSCRIPT_PACKAGES = "${PN}"
