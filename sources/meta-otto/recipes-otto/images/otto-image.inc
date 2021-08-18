@@ -1,17 +1,18 @@
 require recipes-core/images/core-image-minimal.bb
 
-# Skip processing of this recipe if linux-raspberrypi-rt is not explicitly specified as the
+# Skip processing of this recipe if linux-raspberrypi is not explicitly specified as the
 # PREFERRED_PROVIDER for virtual/kernel. This avoids errors when trying
 # to build multiple virtual/kernel providers.
 python () {
-    if d.getVar("PREFERRED_PROVIDER_virtual/kernel") != "linux-raspberrypi-rt":
-        raise bb.parse.SkipRecipe("Set PREFERRED_PROVIDER_virtual/kernel to linux-raspberrypi-rt to enable it")
+    kern = d.getVar("PREFERRED_PROVIDER_virtual/kernel")
+    if kern != "linux-raspberrypi":
+        raise bb.parse.SkipRecipe("Set PREFERRED_PROVIDER_virtual/kernel to linux-raspberrypi to enable it. Value is {}".format(kern))
 }
 
 DESCRIPTION = "OTTO Linux SD card image"
 
 # qemuwrapper-cross is needed in DEPENDS to fix error with font cache update
-DEPENDS = "linux-raspberrypi-rt qemuwrapper-cross"
+DEPENDS = "linux-raspberrypi qemuwrapper-cross"
 
 IMAGE_FEATURES += "splash"
 
