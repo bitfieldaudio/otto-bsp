@@ -132,6 +132,7 @@ do_install() {
   install -m 0755 ${B}/libskia.so ${D}/${libdir}/
 
   install -d ${D}/${includedir}/skia/
+  # Copy over header files for including by other packages
 	cp -r ${S}/include ${D}${includedir}/skia/include
   find ${D}/${includedir}/skia/include/ -type f -exec chmod 0755 {} \;
 
@@ -148,6 +149,7 @@ Cflags: \
   -I${includedir}/skia/include/c \
   -I${includedir}/skia/include/core \
   -I${includedir}/skia/include/gpu \
+  -I${includedir}/skia/include/effects \
   -DSK_HAS_ANDROID_CODEC \
   -DSK_R32_SHIFT=16 \
   -DSK_GAMMA_APPLY_TO_A8 \

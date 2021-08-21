@@ -1,0 +1,56 @@
+software =
+{
+	version = "not-applicable";
+	description = "Software updates for the OTTO platform";
+
+	otto = {
+		hardware-compatibility: ["1.0.0"];
+		stable : {
+			copy1 : {
+				images: (
+					{
+						filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
+						type = "raw";
+						compressed = true;
+						device = "/dev/mmcblk0p2";
+					}
+				);
+				scripts: (
+					{
+						filename = "emmcsetup.lua";
+						type = "lua";
+					}
+				);
+        uboot: (
+                {
+                  name = "rpipart";
+                  value = "2";
+                }
+				);
+
+			};
+			copy2 : {
+				images: (
+					{
+						filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
+						type = "raw";
+						compressed = true;
+						device = "/dev/mmcblk0p3";
+					}
+				);
+				scripts: (
+					{
+						filename = "emmcsetup.lua";
+						type = "lua";
+					}
+				);
+        uboot: (
+                {
+                  name = "rpipart";
+                  value = "3";
+                }
+				);
+			};
+		};
+	}
+}

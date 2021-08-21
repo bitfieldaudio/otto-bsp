@@ -2,7 +2,9 @@
 
 DEFAULTTUNE ?= "cortexa7thf-neon-vfpv4"
 
-IMAGE_FSTYPES = "wic"
+# Jonatan: I think the idea is to generate the wic as the full, bring-up image, 
+# and then the ext4.gz for the .swu file
+IMAGE_FSTYPES = "wic ext4.gz"
 WKS_FILE = "sdimage-otto.wks"
 
 require conf/machine/include/tune-cortexa7.inc
@@ -35,5 +37,8 @@ PREFERRED_PROVIDER_virtual/egl = "userland"
 PREFERRED_PROVIDER_virtual/libgles2 = "userland"
 MACHINE_FEATURES_remove = "vc4graphics"
 MACHINEOVERRIDES = "rpi:${MACHINE}"
+
+# We use U-boot to load the kernel, since this lets us use SWUpdate
+RPI_USE_U_BOOT = "1"
 
 # vim: ft=ini
