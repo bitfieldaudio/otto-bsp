@@ -4,24 +4,24 @@ software =
 	description = "Software updates for the OTTO platform";
 
 	otto = {
-		hardware-compatibility: ["1.0.0"];
+		hardware-compatibility: ["0.3.0"];
 		stable : {
 			copy1 : {
 				images: (
 					{
 						filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
 						type = "raw";
-						compressed = true;
+						compressed = "zlib;
 						device = "/dev/mmcblk0p2";
 					}
 				);
 				scripts: (
 					{
-						filename = "emmcsetup.lua";
-						type = "lua";
+						filename = "flash_mcu.sh";
+						type = "shellscript";
 					}
 				);
-        uboot: (
+        bootenv: (
                 {
                   name = "rpipart";
                   value = "2";
@@ -34,17 +34,17 @@ software =
 					{
 						filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
 						type = "raw";
-						compressed = true;
+						compressed = "zlib";
 						device = "/dev/mmcblk0p3";
 					}
 				);
 				scripts: (
 					{
-						filename = "emmcsetup.lua";
-						type = "lua";
+						filename = "flash_mcu.sh";
+						type = "shellscript";
 					}
 				);
-        uboot: (
+        bootenv: (
                 {
                   name = "rpipart";
                   value = "3";

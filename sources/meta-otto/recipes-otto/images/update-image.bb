@@ -5,7 +5,7 @@ LICENSE = "CLOSED"
 inherit swupdate
 
 SRC_URI = "\
-    file://emmcsetup.lua \
+    file://flash_mcu.sh \
     file://sw-description \
 "
 

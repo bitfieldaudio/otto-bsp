@@ -32,6 +32,10 @@ IMAGE_INSTALL += "kernel-modules \
 #bluez5
 #i2c-tools
 
+SRC_URI = "\
+    file://sw-versions \
+"
+
 # Add Extra 1 GB for ???
 IMAGE_ROOTFS_EXTRA_SPACE = "0"
 
@@ -53,6 +57,13 @@ ttyS0::respawn:/bin/login -f root </dev/ttyS0 >/dev/ttyS0 2>&1
 EOF
   install -d ${IMAGE_ROOTFS}/etc/rcS.d
   mkdir -p ${IMAGE_ROOTFS}/data
+}
+
+addtask add_versions_files after add_startup_modules before do_image
+do_add_versions_files() {
+  # Standard things to have, needed for SWUpdate
+  echo "otto 0.3.0" >> ${IMAGE_ROOTFS}/etc/hwrevision
+  install ${FILE_DIRNAME}/files/sw-versions ${IMAGE_ROOTFS}/etc/sw-versions
 }
 
 # vim: ft=sh
