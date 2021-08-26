@@ -1,4 +1,4 @@
-LICENSE = "Unknown & MIT"
+LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=822f02cc7736281816581cd064afbb1c \
                     file://include/third_party/skcms/LICENSE;md5=c37f94a6c8957870f13f5dd9b7e9f54f \
                     file://include/third_party/vulkan/LICENSE;md5=c37f94a6c8957870f13f5dd9b7e9f54f \
@@ -7,15 +7,14 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=822f02cc7736281816581cd064afbb1c \
                     file://third_party/vulkanmemoryallocator/include/LICENSE.txt;md5=762035fa7cfae632cd5297e05aac6b82 \
                     file://third_party/wuffs/LICENSE;md5=c37f94a6c8957870f13f5dd9b7e9f54f \
                     file://third_party/skcms/LICENSE;md5=c37f94a6c8957870f13f5dd9b7e9f54f \
-                    file://modules/canvaskit/canvaskit/LICENSE;md5=d25bb58a1be2e1af9b58d31565a206dc \
                     file://modules/pathkit/npm-asmjs/LICENSE;md5=d25bb58a1be2e1af9b58d31565a206dc \
                     file://modules/pathkit/npm-wasm/LICENSE;md5=d25bb58a1be2e1af9b58d31565a206dc"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-SRCREV = "1ae440a3cb3c48d769d8d5fe7c95fbba818feed2"
+SRCREV = "832c817bc8a9567aa379181e71e7c602d2480de8"
 
-SRC_URI = "git://skia.googlesource.com/skia.git;protocol=https"
+SRC_URI = "git://skia.googlesource.com/skia.git;branch=main;protocol=https"
 S = "${WORKDIR}/git"
 B = "${S}/out/Release"
 
@@ -132,7 +131,7 @@ do_install() {
   install -m 0755 ${B}/libskia.so ${D}/${libdir}/
 
   install -d ${D}/${includedir}/skia/
-	cp -r ${S}/include ${D}${includedir}/skia/include
+  cp -r ${S}/include ${D}${includedir}/skia/include
   find ${D}/${includedir}/skia/include/ -type f -exec chmod 0755 {} \;
 
   # Get defines with `bin/gn desc out/Release/ //:skia defines`
@@ -148,6 +147,7 @@ Cflags: \
   -I${includedir}/skia/include/c \
   -I${includedir}/skia/include/core \
   -I${includedir}/skia/include/gpu \
+  -I${includedir}/skia/include/effects \
   -DSK_HAS_ANDROID_CODEC \
   -DSK_R32_SHIFT=16 \
   -DSK_GAMMA_APPLY_TO_A8 \

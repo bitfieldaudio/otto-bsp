@@ -1,0 +1,121 @@
+From 739454ab9540bd109520698e140d73ff419e5009 Mon Sep 17 00:00:00 2001
+From: topisani <topisani@hamsterpoison.com>
+Date: Thu, 21 May 2020 15:33:38 +0200
+Subject: [PATCH] Add device tree overlay for st7789v
+
+---
+ arch/arm/boot/dts/overlays/Makefile           |  1 +
+ .../arm/boot/dts/overlays/st7789v-overlay.dts | 74 +++++++++++++++++++
+ drivers/staging/fbtft/fb_st7789v.c            |  3 +
+ 3 files changed, 78 insertions(+)
+ create mode 100644 arch/arm/boot/dts/overlays/st7789v-overlay.dts
+
+diff --git a/arch/arm/boot/dts/overlays/Makefile b/arch/arm/boot/dts/overlays/Makefile
+index 6ab8969f9d85..16380e759cc5 100644
+--- a/arch/arm/boot/dts/overlays/Makefile
++++ b/arch/arm/boot/dts/overlays/Makefile
+@@ -203,6 +203,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
+ 	ssd1306-spi.dtbo \
+ 	ssd1331-spi.dtbo \
+ 	ssd1351-spi.dtbo \
++	st7789v.dtbo \
+ 	superaudioboard.dtbo \
+ 	sx150x.dtbo \
+ 	tc358743.dtbo \
+diff --git a/arch/arm/boot/dts/overlays/st7789v-overlay.dts b/arch/arm/boot/dts/overlays/st7789v-overlay.dts
+new file mode 100644
+index 000000000000..87947a2cc5bd
+--- /dev/null
++++ b/arch/arm/boot/dts/overlays/st7789v-overlay.dts
+@@ -0,0 +1,74 @@
++/*
++ * Device Tree overlay for st7789v
++ *
++ */
++
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709";
++
++	fragment@0 {
++		target = <&spi0>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@1 {
++		target = <&spidev0>;
++		__overlay__ {
++			status = "disabled";
++		};
++	};
++
++	fragment@2 {
++		target = <&spidev1>;
++		__overlay__ {
++			status = "disabled";
++		};
++	};
++
++	fragment@3 {
++		target = <&gpio>;
++		__overlay__ {
++			st7789v_pins: st7789v_pins {
++				brcm,pins = <13 12 0>;
++				brcm,function = <0 0 0>; /* alt0 (pwm) */
++			};
++		};
++	};
++
++	fragment@4 {
++		target = <&spi0>;
++		__overlay__ {
++			/* needed to avoid dtc warning */
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			st7789v: st7789v@0{
++				compatible = "sitronix,st7789v";
++				reg = <0>;
++				pinctrl-names = "default";
++				pinctrl-0 = <&st7789v_pins>;
++				spi-max-frequency = <16000000>;
++				spi-cpol;
++				spi-cpha;
++				rotate = <270>;
++				fps = <50>;
++				buswidth = <9>;
++				debug = <0xBC830018>;
++				reset-gpios = <&gpio 0 0>;
++				led-gpios = <&gpio 12 1>; /* 1 = enable low */
++			};
++		};
++	};
++
++	__overrides__ {
++		speed =		<&st7789v>,"spi-max-frequency:0";
++		rotate =	<&st7789v>,"rotate:0";
++		fps =		<&st7789v>,"fps:0";
++		debug =		<&st7789v>,"debug:0";
++	};
++};
+diff --git a/drivers/staging/fbtft/fb_st7789v.c b/drivers/staging/fbtft/fb_st7789v.c
+index af4e975e7b30..5a1cd1d1608e 100644
+--- a/drivers/staging/fbtft/fb_st7789v.c
++++ b/drivers/staging/fbtft/fb_st7789v.c
+@@ -143,6 +143,9 @@ static int init_display(struct fbtft_par *par)
+ 	 */
+ 	write_reg(par, PWCTRL1, 0xA4, 0xA1);
+ 
++	/* Enter inversion mode because the input is inverted for some reason */
++	write_reg(par, MIPI_DCS_ENTER_INVERT_MODE);
++
+ 	write_reg(par, MIPI_DCS_SET_DISPLAY_ON);
+ 
+ 	if (HSD20_IPS)
+-- 
+2.32.0
+

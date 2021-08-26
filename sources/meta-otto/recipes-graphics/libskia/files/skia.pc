@@ -1,4 +1,0 @@
-Name: skia
-Description: An open source 2D graphics library
-Cflags: -I${includedir} -I${includedir}/include/c -I${includedir}/include/core -I${includedir}/include/gpu
-Libs: -l${libdir}/libskia.a
