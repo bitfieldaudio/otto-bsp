@@ -14,3 +14,9 @@
 	path = sources/poky
 	url = https://git.yoctoproject.org/git/poky
 	branch = gatesgarth
+[submodule "sources/meta-swupdate"]
+	path = sources/meta-swupdate
+	url = https://github.com/sbabic/meta-swupdate.git
+[submodule "sources/meta-swupdate-boards"]
+	path = sources/meta-swupdate-boards
+	url = https://github.com/sbabic/meta-swupdate-boards.git

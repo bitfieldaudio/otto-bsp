@@ -1,0 +1,56 @@
+software =
+{
+	version = "not-applicable";
+	description = "Software updates for the OTTO platform";
+
+	otto = {
+		hardware-compatibility: ["0.3.0"];
+		stable : {
+			copy1 : {
+				images: (
+					{
+						filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
+						type = "raw";
+						compressed = "zlib;
+						device = "/dev/mmcblk0p2";
+					}
+				);
+				scripts: (
+					{
+						filename = "flash_mcu.sh";
+						type = "shellscript";
+					}
+				);
+        bootenv: (
+                {
+                  name = "rpipart";
+                  value = "2";
+                }
+				);
+
+			};
+			copy2 : {
+				images: (
+					{
+						filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
+						type = "raw";
+						compressed = "zlib";
+						device = "/dev/mmcblk0p3";
+					}
+				);
+				scripts: (
+					{
+						filename = "flash_mcu.sh";
+						type = "shellscript";
+					}
+				);
+        bootenv: (
+                {
+                  name = "rpipart";
+                  value = "3";
+                }
+				);
+			};
+		};
+	}
+}
