@@ -57,11 +57,12 @@ EOF
   mkdir -p ${IMAGE_ROOTFS}/data
 }
 
-addtask add_versions_files after add_startup_modules before do_image
+# Needed for SWUpdate
+addtask add_versions_files after do_add_startup_modules before do_image
 do_add_versions_files() {
-  # Standard things to have, needed for SWUpdate
+  install -d ${IMAGE_ROOTFS}/etc/
   echo "otto 0.3.0" >> ${IMAGE_ROOTFS}/etc/hwrevision
-  install ${FILE_DIRNAME}/files/sw-versions ${IMAGE_ROOTFS}/etc/sw-versions
+  install -m 0755 ${FILE_DIRNAME}/files/sw-versions ${IMAGE_ROOTFS}/etc/sw-versions
 }
 
 # vim: ft=sh
