@@ -23,6 +23,14 @@ RPI_KERNEL_DEVICETREE_OVERLAYS_remove = "\
     overlays/vc4-kms-v3d.dtbo \
 "
 
+KERNEL_IMAGEDEST = "boot"
+RDEPENDS_${KERNEL_PACKAGE_NAME}-base = "${KERNEL_PACKAGE_NAME}-image"
+IMAGE_BOOT_FILES ?= "${BOOTFILES_DIR_NAME}/* \
+                 ${@make_dtb_boot_files(d)} \
+                 u-boot.bin;${SDIMG_KERNELIMAGE} boot.scr \
+                 "
+
+
 RPI_KERNEL_DEVICETREE_OVERLAYS = ""
 
 SPLASH = "psplash"

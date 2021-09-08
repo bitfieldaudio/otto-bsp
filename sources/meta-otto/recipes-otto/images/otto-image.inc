@@ -18,16 +18,19 @@ SRC_URI = "\
 IMAGE_FEATURES += "splash"
 
 IMAGE_INSTALL += "kernel-modules \
-				alsa-utils \
-				openocd \
-				linux-firmware-rpidistro-bcm43430 \
-				linux-firmware-rpidistro-bcm43455 \
-		    crda \
+        kernel \
+        kernel-devicetree \
+        alsa-utils \
+        openocd \
+        linux-firmware-rpidistro-bcm43430 \
+        linux-firmware-rpidistro-bcm43455 \
+        crda \
         otto-startup \
         otto-core \
         otto-core-data \
         otto-mcu-fw \
         fbcp-ili9341 \
+        swupdate \
 "
 #rt-tests
 #hwlatdetect
