@@ -1,6 +1,5 @@
 # In do_postinst(), it should flash the mcu firmware
-# (optionally, skip if version is the same as in /etc/sw-versions), 
-# then set /etc/sw-versions to the appropriate version number
+# Skip if version is the same as in /etc/sw-versions - the version is passed as the second argument.
 
 do_preinst()
 {

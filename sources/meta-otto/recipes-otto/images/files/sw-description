@@ -4,14 +4,24 @@ software =
     description = "Software updates for the OTTO platform";
 
     otto = {
-        hardware-compatibility: ["0.3.0"];
+        hardware-compatibility: ["@@HARDWARE_VERSION@@"];
         stable : {
             copy1 : {
                 images: (
                     {
+                        name = "firmware";
+                        version = "@@FIRMWARE_VERSION@@";
+                        filename = "u-boot.bin";
+                        type = "raw";
+                        compressed = "zlib";
+                        install-if-different = true;
+                    },
+                    {
+                        name = "software";
+                        version = "@@SOFTWARE_VERSION@@";
                         filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
                         type = "raw";
-                        compressed = "zlib;
+                        compressed = "zlib";
                         device = "/dev/mmcblk0p2";
                     }
                 );
@@ -19,19 +29,29 @@ software =
                     {
                         filename = "flash_mcu.sh";
                         type = "shellscript";
+                        data = "@@MCU_VERSION@@";
                     }
                 );
-    bootenv: (
-        {
-          name = "rpipart";
-          value = "2";
-        }
+                bootenv: (
+                    {
+                    name = "rpipart";
+                    value = "2";
+                    }
                 );
-
             };
             copy2 : {
                 images: (
                     {
+                        name = "firmware";
+                        version = "@@FIRMWARE_VERSION@@";
+                        filename = "u-boot.bin";
+                        type = "raw";
+                        compressed = "zlib";
+                        install-if-different = true;
+                    },
+                    {
+                        name = "software";
+                        version = "@@SOFTWARE_VERSION@@";
                         filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
                         type = "raw";
                         compressed = "zlib";
@@ -42,13 +62,14 @@ software =
                     {
                         filename = "flash_mcu.sh";
                         type = "shellscript";
+                        data = "@@MCU_VERSION@@";
                     }
                 );
-    bootenv: (
-        {
-          name = "rpipart";
-          value = "3";
-        }
+                bootenv: (
+                    {
+                    name = "rpipart";
+                    value = "3";
+                    }
                 );
             };
         };

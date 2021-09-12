@@ -17,9 +17,8 @@ SRC_URI = "\
 
 IMAGE_FEATURES += "splash"
 
-IMAGE_INSTALL += "kernel-modules \
-        kernel \
-        kernel-devicetree \
+IMAGE_INSTALL += "kernel \
+        kernel-modules \
         alsa-utils \
         openocd \
         linux-firmware-rpidistro-bcm43430 \
@@ -58,14 +57,6 @@ ttyS0::respawn:/bin/login -f root </dev/ttyS0 >/dev/ttyS0 2>&1
 EOF
   install -d ${IMAGE_ROOTFS}/etc/rcS.d
   mkdir -p ${IMAGE_ROOTFS}/data
-}
-
-# Needed for SWUpdate
-addtask add_versions_files after do_add_startup_modules before do_image
-do_add_versions_files() {
-  install -d ${IMAGE_ROOTFS}/etc/
-  echo "otto 0.3.0" >> ${IMAGE_ROOTFS}/etc/hwrevision
-  install -m 0755 ${FILE_DIRNAME}/files/sw-versions ${IMAGE_ROOTFS}/etc/sw-versions
 }
 
 # vim: ft=sh
