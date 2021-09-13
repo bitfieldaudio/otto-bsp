@@ -12,7 +12,6 @@ DESCRIPTION = "OTTO Linux SD card image"
 DEPENDS = "linux-raspberrypi-rt qemuwrapper-cross"
 
 SRC_URI = "\
-    file://sw-versions \
 "
 
 IMAGE_FEATURES += "splash"
