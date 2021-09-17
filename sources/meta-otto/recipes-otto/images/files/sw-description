@@ -11,7 +11,7 @@ software =
                     {
                         name = "firmware";
                         version = "@@FIRMWARE_VERSION@@";
-                        filename = "u-boot.bin";
+                        filename = "@@SWU_UBOOT_FILE@@";
                         type = "raw";
                         compressed = "zlib";
                         install-if-different = true;
@@ -19,7 +19,7 @@ software =
                     {
                         name = "software";
                         version = "@@SOFTWARE_VERSION@@";
-                        filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
+                        filename = "@@SWU_FS_FILE@@";
                         type = "raw";
                         compressed = "zlib";
                         device = "/dev/mmcblk0p2";
@@ -44,7 +44,7 @@ software =
                     {
                         name = "firmware";
                         version = "@@FIRMWARE_VERSION@@";
-                        filename = "u-boot.bin";
+                        filename = "@@SWU_UBOOT_FILE@@";
                         type = "raw";
                         compressed = "zlib";
                         install-if-different = true;
@@ -52,7 +52,7 @@ software =
                     {
                         name = "software";
                         version = "@@SOFTWARE_VERSION@@";
-                        filename = "otto-image-otto-beta-v0.1.0.ext4.gz";
+                        filename = "@@SWU_FS_FILE@@";
                         type = "raw";
                         compressed = "zlib";
                         device = "/dev/mmcblk0p3";

@@ -2,8 +2,6 @@ DESCRIPTION = "An SWUpdate compound image. Based on the meta-swupdate-boards lay
 
 LICENSE = "CLOSED"
 
-inherit swupdate
-
 SRC_URI = "\
     file://flash_mcu.sh \
     file://sw-description \
@@ -16,3 +14,8 @@ IMAGE_DEPENDS = "otto-image"
 SWUPDATE_IMAGES = "otto-image"
 
 SWUPDATE_IMAGES_FSTYPES[otto-image] = ".ext4.gz"
+
+SWU_FS_FILE = "${IMAGE_DEPENDS}-${MACHINE}.ext4.gz"
+SWU_UBOOT_FILE = "u-boot.bin"
+
+inherit swupdate
