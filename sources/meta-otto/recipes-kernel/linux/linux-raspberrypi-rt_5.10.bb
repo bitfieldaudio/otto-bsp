@@ -23,3 +23,6 @@ require recipes-kernel/linux/linux-raspberrypi.inc
 PV = "${LINUX_VERSION}"
 
 KERNEL_DTC_FLAGS += "-@ -H epapr"
+
+# We can't place the kernel in /boot, since we mount the boot partition there
+KERNEL_IMAGEDEST = "boot-kernel"
