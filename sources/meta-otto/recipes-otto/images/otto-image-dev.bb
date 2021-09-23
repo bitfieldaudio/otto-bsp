@@ -14,6 +14,7 @@ IMAGE_INSTALL += "dropbear"
 IMAGE_INSTALL += "gdb"
 IMAGE_INSTALL += "otto-core-tests"
 IMAGE_INSTALL += "swupdate-www"
+IMAGE_INSTALL += "u-boot-fw-utils"
 
 # Extra tools
 IMAGE_INSTALL += "valgrind"

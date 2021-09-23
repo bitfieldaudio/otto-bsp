@@ -1,6 +1,7 @@
-rootfs=`mount | grep "on / type" | cut -d':' -f 2 | cut -d' ' -f 1`
+eval $(fw_printenv rpipart)
 
-if [ $rootfs == '/dev/mmcblk0p2' ];then
+# partition 2 = copy1, part 3 = copy 2
+if [ "$rpipart" == "2" ];then
 	selection="-e stable,copy2"
 else
 	selection="-e stable,copy1"
