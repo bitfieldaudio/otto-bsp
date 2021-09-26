@@ -22,7 +22,6 @@ IMAGE_INSTALL += "kernel \
         openocd \
         linux-firmware-rpidistro-bcm43430 \
         linux-firmware-rpidistro-bcm43455 \
-        crda \
         otto-startup \
         otto-core \
         otto-core-data \
