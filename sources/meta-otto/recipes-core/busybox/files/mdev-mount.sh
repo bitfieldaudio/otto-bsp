@@ -12,9 +12,9 @@ autorun_swu() {
   for swufile in swufiles
   do
     echo "Found .SWU file! Running..."
-		. /usr/lib/swupdate/conf.d/09-swupdate-args
-		exec /usr/bin/swupdate $SWUPDATE_ARGS -i swufile
-    exit 0
+	. /usr/lib/swupdate/conf.d/09-swupdate-args
+	/usr/bin/swupdate $SWUPDATE_ARGS -i swufile
+    return 0
   done
 }
 
