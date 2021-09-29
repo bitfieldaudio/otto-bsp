@@ -27,7 +27,9 @@ IMAGE_INSTALL += "kernel \
         otto-core-data \
         otto-mcu-fw \
         fbcp-ili9341 \
+        psplash \
         swupdate \
+        swupdate-progress \
 "
 #rt-tests
 #hwlatdetect
