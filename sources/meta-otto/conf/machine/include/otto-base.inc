@@ -37,7 +37,13 @@ SPLASH = "psplash"
 
 SDIMG_KERNELIMAGE ?= "kernel7.img"
 UBOOT_MACHINE = "rpi_3_32b_config"
-SERIAL_CONSOLES ?= "115200;ttyS0"
+
+# Disable gettys on tty1 and serial consoles
+# Login shells are started from otto-image.inc
+SERIAL_CONSOLES = ""
+USE_VT = ""
+SYSVINIT_ENABLED_GETTYS = ""
+
 PREFERRED_PROVIDER_virtual/kernel = "linux-raspberrypi"
 PREFERRED_PROVIDER_virtual/egl = "userland"
 PREFERRED_PROVIDER_virtual/libgles2 = "userland"
