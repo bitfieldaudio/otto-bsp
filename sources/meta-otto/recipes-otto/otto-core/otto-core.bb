@@ -40,14 +40,25 @@ INITSCRIPT_PACKAGES = "${PN}"
 INITSCRIPT_NAME_${PN} = "otto-core.sh"
 INITSCRIPT_PARAMS_${PN} = "start 100 2 3 4 5 . stop 1 0 1 6 ."
 
-do_install () {
-	install -d ${D}/data
-	install -d ${D}/data/bin
-	install -m 0755 bin/otto ${D}/data/bin/otto
-	install -m 0755 bin/test ${D}/data/bin/otto-tests
-	install -d ${D}/data/data
-	cp -r ${S}/data/* ${D}/data/data
+OTTO_INSTALL_DIR = "/home/root/otto"
 
+do_install () {
+	# Install otto in proper location
+	install -d ${D}${OTTO_INSTALL_DIR}/bin
+	install -d ${D}${OTTO_INSTALL_DIR}/data
+	install -m 0755 bin/otto ${D}${OTTO_INSTALL_DIR}/bin/otto
+	install -m 0755 bin/test ${D}${OTTO_INSTALL_DIR}/bin/otto-tests
+	cp -r ${S}/data/* ${D}${OTTO_INSTALL_DIR}/data
+
+	# Prepare an overrides folder for adding otto override.
+	# To use, copy over directories:
+	# - /data/overrides/otto/bin
+	# - /data/overrides/otto/data
+	install -d ${D}/data/overrides
+	# Install script to find appropriate executable
+	install -d ${D}/home/root/scripts
+	install -m 0755 ${FILE_DIRNAME}/files/find-otto-core-exe.sh ${D}$/home/root/scripts/find-otto-core-exe.sh
+	# Install init script
   install -d ${D}${sysconfdir}/init.d/
   install -m 0755 ${FILE_DIRNAME}/files/otto-core.sh ${D}${sysconfdir}/init.d/
 }

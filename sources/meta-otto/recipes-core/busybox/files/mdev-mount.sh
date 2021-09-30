@@ -6,20 +6,6 @@ if [ "${MDEV_AUTOMOUNT}" = "n" ] ; then
   exit 0
 fi
 
-# Run swupdate on swu files
-autorun_swu() {
-  for swufile in $1/*.swu; do
-    if [ -f "$swufile" ]; then
-      echo "Found .SWU file! Running..."
-      killall otto
-      echo 
-      . /usr/lib/swupdate/conf.d/09-swupdate-args
-      /usr/bin/swupdate $SWUPDATE_ARGS -i "$swufile" 2>&1  > $TMPDIR/update.log
-    fi
-    return 0
-  done
-}
-
 case "$ACTION" in
   add|"")
     ACTION="add"
@@ -59,7 +45,7 @@ case "$ACTION" in
       mkdir -p "$MOUNTPOINT"
       mount -t auto /dev/$MDEV "$MOUNTPOINT" || rmdir "$MOUNTPOINT"
       # OTTO-specific: Run swupdate on possible .swu file
-      autorun_swu $MOUNTPOINT
+      /home/root/scripts/autorun_swu $MOUNTPOINT
     fi
     ;;
   remove)

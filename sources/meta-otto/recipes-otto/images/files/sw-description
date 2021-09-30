@@ -30,6 +30,10 @@ software =
                         filename = "flash_mcu.sh";
                         type = "shellscript";
                         data = "@@MCU_VERSION@@";
+                    },
+                    {
+                        filename = "delete_overrides.sh";
+                        type = "shellscript";
                     }
                 );
                 bootenv: (
@@ -63,6 +67,10 @@ software =
                         filename = "flash_mcu.sh";
                         type = "shellscript";
                         data = "@@MCU_VERSION@@";
+                    },
+                    {
+                        filename = "delete_overrides.sh";
+                        type = "shellscript";
                     }
                 );
                 bootenv: (

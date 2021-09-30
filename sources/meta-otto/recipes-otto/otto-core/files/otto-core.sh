@@ -1,7 +1,8 @@
 #!/bin/sh
 
 do_start() {
-  cd /data
+  . /home/root/scripts/find-otto-core-exe.sh
+	cd $OTTODIR
 	bin/otto &
 }
 
