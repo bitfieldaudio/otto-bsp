@@ -57,7 +57,10 @@ do_install () {
 	install -d ${D}/data/overrides
 	# Install script to find appropriate executable
 	install -d ${D}/home/root/scripts
-	install -m 0755 ${FILE_DIRNAME}/files/find-otto-core-exe.sh ${D}$/home/root/scripts/find-otto-core-exe.sh
+	install -m 0755 ${FILE_DIRNAME}/files/find-otto-core-exe.sh ${D}/home/root/scripts/find-otto-core-exe.sh
+	# Script for autoconnecting USB midi devices
+	install -m 0755 ${FILE_DIRNAME}/files/parse_aconnect.awk ${D}/home/root/scripts/parse_aconnect.awk
+	install -m 0755 ${FILE_DIRNAME}/files/midi_autoconnect.sh ${D}/home/root/scripts/midi_autoconnect.sh
 	# Install init script
   install -d ${D}${sysconfdir}/init.d/
   install -m 0755 ${FILE_DIRNAME}/files/otto-core.sh ${D}${sysconfdir}/init.d/
