@@ -1,5 +1,5 @@
 if [ -x /data/overrides/otto/bin/otto ]; then
-  OTTODIR="/data/overrides/otto"
+  echo "/data/overrides/otto"
 else
-  OTTODIR="/home/root/otto"
+  echo "/home/root/otto"
 fi

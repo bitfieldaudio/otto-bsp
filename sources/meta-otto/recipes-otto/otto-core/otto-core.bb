@@ -30,25 +30,34 @@ TARGET_CFLAGS += "-Wno-psabi"
 
 PACKAGES += "${PN}-tests"
 PACKAGES += "${PN}-data"
+PACKAGES += "${PN}-scripts"
 
-FILES_${PN} += "/data/bin/otto"
-FILES_${PN}-tests += "/data/bin/otto-tests"
+OTTO_INSTALL_DIR = "/home/root/otto"
+
+FILES_${PN} += "${OTTO_INSTALL_DIR}/bin/otto"
+FILES_${PN}-tests += "${OTTO_INSTALL_DIR}/bin/otto-tests"
 FILES_${PN}-data += "/data/data/*"
+FILES_${PN}-data += "/data/overrides"
+FILES_${PN}-scripts += "/home/root/scripts/*"
+
+RDEPENDS_${PN}-tests += "${PN}"
+
+RDEPENDS_${PN} += "${PN}-data"
+RDEPENDS_${PN} += "${PN}-scripts"
 #INSTALL_PREFIX = "${@bb.utils.contains('PACKAGECONFIG', '')}"
 
 INITSCRIPT_PACKAGES = "${PN}"
 INITSCRIPT_NAME_${PN} = "otto-core.sh"
 INITSCRIPT_PARAMS_${PN} = "start 100 2 3 4 5 . stop 1 0 1 6 ."
 
-OTTO_INSTALL_DIR = "/home/root/otto"
-
 do_install () {
 	# Install otto in proper location
 	install -d ${D}${OTTO_INSTALL_DIR}/bin
-	install -d ${D}${OTTO_INSTALL_DIR}/data
 	install -m 0755 bin/otto ${D}${OTTO_INSTALL_DIR}/bin/otto
 	install -m 0755 bin/test ${D}${OTTO_INSTALL_DIR}/bin/otto-tests
-	cp -r ${S}/data/* ${D}${OTTO_INSTALL_DIR}/data
+	
+	install -d ${D}/data/data
+	cp -r ${S}/data/* ${D}/data/data
 
 	# Prepare an overrides folder for adding otto override.
 	# To use, copy over directories:
@@ -59,9 +68,8 @@ do_install () {
 	install -d ${D}/home/root/scripts
 	install -m 0755 ${FILE_DIRNAME}/files/find-otto-core-exe.sh ${D}/home/root/scripts/find-otto-core-exe.sh
 	# Script for autoconnecting USB midi devices
-	install -m 0755 ${FILE_DIRNAME}/files/parse_aconnect.awk ${D}/home/root/scripts/parse_aconnect.awk
 	install -m 0755 ${FILE_DIRNAME}/files/midi_autoconnect.sh ${D}/home/root/scripts/midi_autoconnect.sh
 	# Install init script
-  install -d ${D}${sysconfdir}/init.d/
-  install -m 0755 ${FILE_DIRNAME}/files/otto-core.sh ${D}${sysconfdir}/init.d/
+	install -d ${D}${sysconfdir}/init.d/
+	install -m 0755 ${FILE_DIRNAME}/files/otto-core.sh ${D}${sysconfdir}/init.d/
 }

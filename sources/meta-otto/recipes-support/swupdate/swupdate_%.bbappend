@@ -9,6 +9,8 @@ SRC_URI += " \
     file://autorun_swu.sh \
     "
 
+FILES_${PN} += "/home/root/scripts/autorun_swu.sh"
+
 do_install_append() {
     install -m 0644 ${WORKDIR}/09-swupdate-args ${D}${libdir}/swupdate/conf.d/
 
