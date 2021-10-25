@@ -1,4 +1,5 @@
 require recipes-core/images/core-image-minimal.bb
+inherit otto-features
 
 python () {
     kern = d.getVar("PREFERRED_PROVIDER_virtual/kernel")
@@ -14,7 +15,10 @@ DEPENDS = "linux-raspberrypi-rt qemuwrapper-cross"
 SRC_URI = "\
 "
 
+
+IMAGE_FEATURES += "read-only-rootfs"
 IMAGE_FEATURES += "splash"
+IMAGE_FEATURES += "convenience-aliases"
 
 IMAGE_INSTALL += "kernel \
         kernel-modules \
@@ -58,5 +62,23 @@ EOF
   install -d ${IMAGE_ROOTFS}/etc/rcS.d
   mkdir -p ${IMAGE_ROOTFS}/data
 }
+
+# Make sure the initial env is baked into the boot partition
+DEPENDS += "u-boot-mkenvimage-native"
+
+IMAGE_BOOT_FILES += "uboot.env"
+IMAGE_PREPROCESS_COMMAND += "do_save_env;"
+do_save_env () {
+  mkenvimage -s 0x4000 -o ${DEPLOY_DIR_IMAGE}/uboot.env ${DEPLOY_DIR_IMAGE}/u-boot-initial-env
+}
+
+# Deploy the boot partition to be used in the .swu file
+IMAGE_POSTPROCESS_COMMAND += "do_deploy_vfat_partition;"
+do_deploy_vfat_partition () {
+  install -m 0644 ${WORKDIR}/build-wic/sdimage-otto-*.p1 ${DEPLOY_DIR_IMAGE}/wic-boot-partition.vfat
+}
+
+
+
 
 # vim: ft=sh

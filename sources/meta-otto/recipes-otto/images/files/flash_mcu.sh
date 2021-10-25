@@ -5,7 +5,7 @@ do_postinst()
 {
     echo "Checking if MCU should be updated..."
     VERSIONFILE="/etc/sw-versions"
-    if [ ! -x "$VERSIONFILE" ]; then
+    if [ ! -f "$VERSIONFILE" ]; then
         echo "$VERSIONFILE not found!"
         exit 1
     fi

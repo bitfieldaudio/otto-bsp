@@ -17,5 +17,5 @@ SWUPDATE_ARGS="${selection} -f ${CFGFILE}"
 
 # HACK! Only used because we don't have extra space on rootfs (overlay)
 # Used by SWUpdate/Mongoose to extract the sent .swu file.
-export TMPDIR="/data/tmp"
-mkdir -p $TMPDIR
+export TMPDIR="/tmp"
+#mkdir -p $TMPDIR

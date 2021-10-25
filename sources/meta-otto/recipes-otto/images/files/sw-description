@@ -7,24 +7,6 @@ software =
         hardware-compatibility: ["@@HARDWARE_VERSION@@"];
         stable : {
             copy1 : {
-                images: (
-                    {
-                        name = "firmware";
-                        version = "@@FIRMWARE_VERSION@@";
-                        filename = "@@SWU_UBOOT_FILE@@";
-                        type = "raw";
-                        compressed = "zlib";
-                        install-if-different = true;
-                    },
-                    {
-                        name = "software";
-                        version = "@@SOFTWARE_VERSION@@";
-                        filename = "@@SWU_FS_FILE@@";
-                        type = "raw";
-                        compressed = "zlib";
-                        device = "/dev/mmcblk0p2";
-                    }
-                );
                 scripts: (
                     {
                         filename = "flash_mcu.sh";
@@ -34,6 +16,25 @@ software =
                     {
                         filename = "delete_overrides.sh";
                         type = "shellscript";
+                    }
+                );
+                images: (
+                    {
+                        name = "firmware";
+                        version = "@@FIRMWARE_VERSION@@";
+                        filename = "@@SWU_UBOOT_FILE@@";
+                        type = "raw";
+                        device = "/dev/mmcblk0p1";
+                        install-if-different = true;
+                    },
+                    {
+                        name = "software";
+                        version = "@@SOFTWARE_VERSION@@";
+                        filename = "@@SWU_FS_FILE@@";
+                        type = "raw";
+                        compressed = "zlib";
+                        device = "/dev/mmcblk0p2";
+                        installed-directly = true;
                     }
                 );
                 bootenv: (
@@ -44,24 +45,6 @@ software =
                 );
             };
             copy2 : {
-                images: (
-                    {
-                        name = "firmware";
-                        version = "@@FIRMWARE_VERSION@@";
-                        filename = "@@SWU_UBOOT_FILE@@";
-                        type = "raw";
-                        compressed = "zlib";
-                        install-if-different = true;
-                    },
-                    {
-                        name = "software";
-                        version = "@@SOFTWARE_VERSION@@";
-                        filename = "@@SWU_FS_FILE@@";
-                        type = "raw";
-                        compressed = "zlib";
-                        device = "/dev/mmcblk0p3";
-                    }
-                );
                 scripts: (
                     {
                         filename = "flash_mcu.sh";
@@ -71,6 +54,25 @@ software =
                     {
                         filename = "delete_overrides.sh";
                         type = "shellscript";
+                    }
+                );
+                images: (
+                    {
+                        name = "firmware";
+                        version = "@@FIRMWARE_VERSION@@";
+                        filename = "@@SWU_UBOOT_FILE@@";
+                        type = "raw";
+                        device = "/dev/mmcblk0p1";
+                        install-if-different = true;
+                    },
+                    {
+                        name = "software";
+                        version = "@@SOFTWARE_VERSION@@";
+                        filename = "@@SWU_FS_FILE@@";
+                        type = "raw";
+                        compressed = "zlib";
+                        device = "/dev/mmcblk0p3";
+                        installed-directly = true;
                     }
                 );
                 bootenv: (

@@ -24,7 +24,7 @@ do_install_append() {
     # hwrevision
     echo "otto 0.3.0" >> ${D}${sysconfdir}/hwrevision
     # sw-versions
-    echo -e \
+    echo \
 "firmware ${FIRMWARE_VERSION}
 software ${SOFTWARE_VERSION}
 mcu ${MCU_VERSION}" >> ${D}${sysconfdir}/sw-versions

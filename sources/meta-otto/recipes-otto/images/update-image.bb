@@ -3,6 +3,7 @@ DESCRIPTION = "An SWUpdate compound image. Based on the meta-swupdate-boards lay
 LICENSE = "CLOSED"
 
 SRC_URI = "\
+    file://delete_overrides.sh \
     file://flash_mcu.sh \
     file://sw-description \
 "

@@ -45,7 +45,7 @@ case "$ACTION" in
       mkdir -p "$MOUNTPOINT"
       mount -t auto /dev/$MDEV "$MOUNTPOINT" || rmdir "$MOUNTPOINT"
       # OTTO-specific: Run swupdate on possible .swu file
-      /home/root/scripts/autorun_swu $MOUNTPOINT
+      /home/root/scripts/autorun_swu.sh $MOUNTPOINT
     fi
     ;;
   remove)
