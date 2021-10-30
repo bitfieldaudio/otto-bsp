@@ -4,7 +4,6 @@ LICENSE = "CLOSED"
 
 SRC_URI = "\
     file://delete_overrides.sh \
-    file://flash_mcu.sh \
     file://sw-description \
 "
 

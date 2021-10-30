@@ -9,11 +9,6 @@ software =
             copy1 : {
                 scripts: (
                     {
-                        filename = "flash_mcu.sh";
-                        type = "shellscript";
-                        data = "@@MCU_VERSION@@";
-                    },
-                    {
                         filename = "delete_overrides.sh";
                         type = "shellscript";
                     }
@@ -46,11 +41,6 @@ software =
             };
             copy2 : {
                 scripts: (
-                    {
-                        filename = "flash_mcu.sh";
-                        type = "shellscript";
-                        data = "@@MCU_VERSION@@";
-                    },
                     {
                         filename = "delete_overrides.sh";
                         type = "shellscript";

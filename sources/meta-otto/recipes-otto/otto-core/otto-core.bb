@@ -12,6 +12,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "virtual/libgles2 alsa-lib userland libexecinfo libskia boost"
 
+RDEPENDS_${PN} += "otto-mcu-communicator"
+
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig update-rc.d
