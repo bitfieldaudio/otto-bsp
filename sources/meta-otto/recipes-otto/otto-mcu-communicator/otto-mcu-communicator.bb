@@ -1,8 +1,8 @@
 DESCRIPTION = "The OTTO-MCU communicator service."
 HOMEPAGE = "https://github.com/bitfieldaudio/otto-mcu-communicator"
 
-#SRCREV = "<commit-hash>"
-SRC_URI = "git://github.com/bitfieldaudio/otto-mcu-communicator;branch=master;rev=master"
+SRCREV = "deb75f3e0742189e3c09a059fbf3115e62f0612e"
+SRC_URI = "git://github.com/bitfieldaudio/otto-mcu-communicator;branch=master"
 PV = "1.0.0+git${SRCPV}"
 
 LICENSE = "CC_BY-NC-SA_4.0"
@@ -39,7 +39,7 @@ COMMUNICATOR_INSTALL_DIR = "/home/root/otto-mcu-communicator"
 do_install () {
 	# Install service in proper location
 	install -d ${D}${COMMUNICATOR_INSTALL_DIR}
-	install -m 0755 ${WORKDIR}/build/bin/mcu_service ${D}${COMMUNICATOR_INSTALL_DIR}/mcu_service
+	install -m 0755 bin/mcu_service ${D}${COMMUNICATOR_INSTALL_DIR}/mcu_service
 
 	# Install init script
 	install -d ${D}${sysconfdir}/init.d/
