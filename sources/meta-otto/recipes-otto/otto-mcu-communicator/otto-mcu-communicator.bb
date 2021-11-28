@@ -1,8 +1,8 @@
 DESCRIPTION = "The OTTO-MCU communicator service."
 HOMEPAGE = "https://github.com/bitfieldaudio/otto-mcu-communicator"
 
-SRCREV = "deb75f3e0742189e3c09a059fbf3115e62f0612e"
-SRC_URI = "git://github.com/bitfieldaudio/otto-mcu-communicator;branch=master"
+# SRCREV = "deb75f3e0742189e3c09a059fbf3115e62f0612e"
+SRC_URI = "git://github.com/bitfieldaudio/otto-mcu-communicator;branch=master;rev=master"
 PV = "1.0.0+git${SRCPV}"
 
 LICENSE = "CC_BY-NC-SA_4.0"
