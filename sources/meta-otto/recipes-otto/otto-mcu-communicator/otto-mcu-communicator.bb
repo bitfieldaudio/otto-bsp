@@ -36,6 +36,8 @@ INITSCRIPT_PARAMS_${PN} = "start 100 2 3 4 5 . stop 1 0 1 6 ."
 
 COMMUNICATOR_INSTALL_DIR = "/home/root/otto-mcu-communicator"
 
+BUILDHISTORY_CHECKVERBACKWARDS = "0"
+
 do_install () {
 	# Install service in proper location
 	install -d ${D}${COMMUNICATOR_INSTALL_DIR}
