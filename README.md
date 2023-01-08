@@ -1,6 +1,14 @@
 # Description
 otto-bsp is intended to provide developers of the OTTO synth an easy to setup environment for OpenEmbedded/Yocto project development. This respository is set up with git submodules to link together all of the required BSP layers.
 
+# Getting started in a Docker container
+Install Docker (Docker Engine or Docker Desktop if you want) on a suitable system. All dependencies will be managed by the Docker container.
+Once this is installed correctly, you are ready to download the project source:
+```
+git clone --recurse-submodules https://github.com/OTTO-project/otto-bsp.git
+```
+
+
 # Getting started with an existing Linux system
 If you already have a linux system available for development, the dependencies for development are as follows:
 ```
