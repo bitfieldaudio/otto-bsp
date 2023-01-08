@@ -3,11 +3,23 @@ otto-bsp is intended to provide developers of the OTTO synth an easy to setup en
 
 # Getting started in a Docker container
 Install Docker (Docker Engine or Docker Desktop if you want) on a suitable system. All dependencies will be managed by the Docker container.
-Once this is installed correctly, you are ready to download the project source:
+Make sure to add yourelf to the docker user group after installation:
+```
+sudo usermod -aG docker ${USER}
+```
+Then log out and back in. You must download the project source with all submodules:
 ```
 git clone --recurse-submodules https://github.com/OTTO-project/otto-bsp.git
 ```
-
+To build the docker image, execute
+```
+./activate-env.sh
+```
+This will also start up a container and let you enter it. From here, set up the build directory and initiate a build
+```
+MACHINE=otto-beta-v0.1.0 DISTRO=otto source setup-environment build
+bitbake otto-image-dev
+```
 
 # Getting started with an existing Linux system
 If you already have a linux system available for development, the dependencies for development are as follows:

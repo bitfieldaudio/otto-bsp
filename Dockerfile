@@ -15,15 +15,19 @@ RUN apt-get update && \
     # some of the OpenGL-specific dependencies since we don't use OpenGL.
     # Reference: https://docs.yoctoproject.org/3.3.4/ref-manual/system-requirements.html#ubuntu-and-debian
     gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio \
-    python3.10 python3.10-distutils python3.10-venv python3.10-pexpect \
-    python3.10-git pylint3.10 python3-jinja2 xz-utils debianutils iputils-ping xterm zstd \
+    python3.10 python3.10-distutils python3.10-venv python3-pexpect \
+    python3-git pylint3 python3-jinja2 xz-utils debianutils iputils-ping xterm zstd \
     liblz4-tool libegl1-mesa libsdl1.2-dev xterm python3-subunit mesa-common-dev \
+    # We also need python2 for now
+    python2.7 \
     # For `locale-gen` that we use later in this script
     locales
 
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 RUN update-alternatives --set python3 /usr/bin/python3.10
+
+RUN update-alternatives --install /usr/bin/python2 python2 /usr/bin/python2.7 1
+RUN update-alternatives --set python2 /usr/bin/python2.7
 
 # Install pip
 RUN python3 -m ensurepip --default-pip --user
@@ -59,4 +63,11 @@ RUN adduser --disabled-password --gecos '' \
 
 USER ${USER_NAME}
 ENV HOME /home/${USER_NAME}
+
+# Set working directory to the project directory. This should be mounted on run.
+WORKDIR /otto-bsp
+ENV MACHINE=otto-beta-v0.1.0
+ENV DISTRO=otto
+# Default command is to prepare the environment for building the yocto project
+CMD bash
 

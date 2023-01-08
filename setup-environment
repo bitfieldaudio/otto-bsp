@@ -152,7 +152,8 @@ if [ "$build_dir_setup_enabled" = "true" ]; then
     TEMPLATES=$CWD/sources/base/conf 
     grep -v '^#\|^$' conf/local.conf.sample > conf/local.conf
     cat >> conf/local.conf <<EOF
-DL_DIR ?= "\${BSPDIR}/downloads/"
+DL_DIR = "/bitbake-vol/downloads/"
+SSTATE_DIR = "/bitbake-vol/sstate-cache/"
 EOF
     # Change settings according environment
     sed -e "s,MACHINE ??=.*,MACHINE ??= '$MACHINE',g" \
