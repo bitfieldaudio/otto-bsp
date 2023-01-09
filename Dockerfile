@@ -11,8 +11,7 @@ RUN apt-get update && \
     add-apt-repository -y ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get install -y \
-    # Yocto (hardknott) system requirements. We manually removed
-    # some of the OpenGL-specific dependencies since we don't use OpenGL.
+    # Yocto (hardknott) system requirements.
     # Reference: https://docs.yoctoproject.org/3.3.4/ref-manual/system-requirements.html#ubuntu-and-debian
     gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio \
     python3.10 python3.10-distutils python3.10-venv python3-pexpect \
@@ -66,7 +65,8 @@ ENV HOME /home/${USER_NAME}
 
 # Set working directory to the project directory. This should be mounted on run.
 WORKDIR /otto-bsp
-ENV MACHINE=otto-beta-v0.1.0
+# Current values for convenience. Increment these if needed.
+ENV MACHINE=otto-beta-v0.3.0
 ENV DISTRO=otto
 # Default command is to prepare the environment for building the yocto project
 CMD bash
