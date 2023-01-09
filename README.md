@@ -17,8 +17,8 @@ To build the docker image, execute
 ```
 This will also start up a container and let you enter it. From here, set up the build directory and initiate a build
 ```
-MACHINE=otto-beta-v0.1.0 DISTRO=otto source setup-environment build
-bitbake otto-image-dev
+MACHINE=otto-beta-v0.3.0 DISTRO=otto source setup-environment build
+bitbake update-image
 ```
 
 # Getting started with an existing Linux system
@@ -34,7 +34,7 @@ git clone --recurse-submodules https://github.com/OTTO-project/otto-bsp.git
 
 Once the source is downloaded, you are ready to set up your local build directory and initiate a build:
 ```
-MACHINE=otto-beta-v0.1.0 DISTRO=otto source setup-environment build
+MACHINE=otto-beta-v0.3.0 DISTRO=otto source setup-environment build
 bitbake otto-image-dev
 ```
 The `MACHINE` environment variable corresponds roughly to iterations of the hardware - changing things such as pin layout and peripherals. Currently, this is the most recent version.  Building the `-dev` image includes an SSH server ond some development tools. If this is not needed, you can `bitbake otto-image`.

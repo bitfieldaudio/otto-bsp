@@ -4,7 +4,7 @@ software =
     description = "Software updates for the OTTO platform";
 
     otto = {
-        hardware-compatibility: ["@@HARDWARE_VERSION@@"];
+        hardware-compatibility: ["@@HWREVISION@@"];
         stable : {
             copy1 : {
                 scripts: (

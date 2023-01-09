@@ -1,7 +1,7 @@
 DESCRIPTION = "fbcp-ili9341 screen driver"  
 LICENSE = "MIT"
 
-SRCREV = "${AUTOREV}"
+SRCREV = "9766d43dce9e406404b76ba76dc71daa0d4c3b1b"
 SRC_URI = "git://github.com/juj/fbcp-ili9341.git;protocol=https \
            file://0001-Added-support-for-ST7789V.patch \
            "

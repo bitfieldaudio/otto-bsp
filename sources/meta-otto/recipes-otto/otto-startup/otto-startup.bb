@@ -5,9 +5,10 @@ HOMEPAGE = "https://github.com/OTTO-project/meta-otto"
 LICENSE = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
-SRC_URI = "file://init \
-		file://LICENSE \
-		"
+SRC_URI = " \
+        file://init \
+	file://LICENSE \
+"
 
 S = "${WORKDIR}"
 

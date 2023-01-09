@@ -5,7 +5,7 @@ HOMEPAGE = "https://github.com/adorbs/otto-mcu-fw"
 LICENSE = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 
-SRC_URI = "https://github.com/OTTO-project/otto-mcu-fw/releases/download/v0.0.1/otto-mcu-fw.elf;name=elf \
+SRC_URI = "https://github.com/OTTO-project/otto-mcu-fw/releases/download/${OTTO_FW_RELEASE}/otto-mcu-fw.elf;name=elf \
 		file://load-otto-mcu-fw.sh \
 		file://openocd.cfg \
 		file://LICENSE"
@@ -28,6 +28,3 @@ do_install() {
       ${D}/home/root/${PN}/openocd.cfg
     sed -i "s/<MCU_TYPE>/${OPENOCD_MCU_TYPE}/g" ${D}/home/root/${PN}/load-otto-mcu-fw.sh
 }
-
-# TODO: Hopefully get an answer to this SO question: https://stackoverflow.com/q/61673614/5144291
-# Then this can be configured from the machine instead

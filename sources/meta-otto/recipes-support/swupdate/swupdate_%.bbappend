@@ -22,7 +22,7 @@ do_install_append() {
     install -m 0755 ${WORKDIR}/autorun_swu.sh ${D}/home/root/scripts/ 
 
     # hwrevision
-    echo "otto 0.3.0" >> ${D}${sysconfdir}/hwrevision
+    echo "otto ${HWREVISION}" >> ${D}${sysconfdir}/hwrevision
     # sw-versions
     echo \
 "firmware ${FIRMWARE_VERSION}
