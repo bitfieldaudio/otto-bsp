@@ -9,8 +9,12 @@ software =
             copy1 : {
                 scripts: (
                     {
-                        filename = "delete_overrides.sh";
-                        type = "shellscript";
+                        filename = "delete-overrides.sh";
+                        type = "postinstall";
+                    },
+                    {
+                        filename = "load-mcu-fw-if-different.sh";
+                        type = "postinstall";
                     }
                 );
                 images: (
@@ -42,8 +46,12 @@ software =
             copy2 : {
                 scripts: (
                     {
-                        filename = "delete_overrides.sh";
-                        type = "shellscript";
+                        filename = "delete-overrides.sh";
+                        type = "postinstall";
+                    },
+                    {
+                        filename = "load-mcu-fw-if-different.sh";
+                        type = "postinstall";
                     }
                 );
                 images: (

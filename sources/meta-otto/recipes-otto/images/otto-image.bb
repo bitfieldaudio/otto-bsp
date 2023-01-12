@@ -1,1 +1,1 @@
-include otto-image.inc
+require otto-image.inc

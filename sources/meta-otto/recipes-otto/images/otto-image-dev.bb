@@ -1,4 +1,4 @@
-include otto-image.inc
+require otto-image.inc
 
 DESCRIPTION = "OTTO Linux SD card image including development tools"
 
