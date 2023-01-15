@@ -1,23 +1,17 @@
 #!/bin/sh
 
-do_start() {
-  /home/root/otto-mcu-communicator/mcu_service &
-}
-
-do_stop() {
-	killall mcu_service
-}
-
 case "$1" in
   start)
-	do_start
+    mkdir -p /var/run/dbus
+    dbus-daemon --system
+    connmand
 	;;
   restart|reload|force-reload)
 	echo "Error: argument '$1' not supported" >&2
 	exit 3
 	;;
   stop)
-    do_stop
+    killall connmand
 	;;
   *)
 	echo "Usage: $0 start|stop" >&2

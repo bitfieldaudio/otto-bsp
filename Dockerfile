@@ -17,6 +17,8 @@ RUN apt-get update && \
     python3.10 python3.10-distutils python3.10-venv python3-pexpect \
     python3-git pylint3 python3-jinja2 xz-utils debianutils iputils-ping xterm zstd \
     liblz4-tool libegl1-mesa libsdl1.2-dev xterm python3-subunit mesa-common-dev \
+    # For htop
+    libncurses5-dev libncursesw5-dev \
     # We also need python2 for now
     python2.7 \
     # For `locale-gen` that we use later in this script

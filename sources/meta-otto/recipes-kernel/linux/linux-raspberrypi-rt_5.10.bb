@@ -24,5 +24,10 @@ PV = "${LINUX_VERSION}"
 
 KERNEL_DTC_FLAGS += "-@ -H epapr"
 
+# Load these kernel modules on boot
+KERNEL_MODULE_AUTOLOAD += "i2c-dev"
+KERNEL_MODULE_AUTOLOAD += "snd-seq-midi"
+KERNEL_MODULE_AUTOLOAD += "uinput"
+
 # We can't place the kernel in /boot, since we mount the boot partition there
 KERNEL_IMAGEDEST = "boot-kernel"

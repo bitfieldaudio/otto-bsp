@@ -1,7 +1,13 @@
 DESCRIPTION = "The OTTO core software."
-HOMEPAGE = "https://github.com/topisani/OTTO"
+HOMEPAGE = "https://github.com/bitfieldaudio/otto"
 
-SRC_URI = "git://github.com/OTTO-project/OTTO;branch=develop;rev=develop"
+SRC_URI = "git://github.com/bitfieldaudio/otto;branch=develop;rev=develop \
+	file://find-otto-core-exe.sh \
+	file://midi-autoconnect.sh \
+	file://otto-core.sh \
+"
+
+# Set this in distro conf
 SRCREV ?= ""
 PV = "1.0.0+git${SRCPV}"
 
@@ -39,6 +45,7 @@ OTTO_INSTALL_DIR = "/home/root/otto"
 FILES_${PN} += "${OTTO_INSTALL_DIR}/bin/otto"
 FILES_${PN}-tests += "${OTTO_INSTALL_DIR}/bin/otto-tests"
 FILES_${PN}-data += "/data/data/*"
+FILES_${PN}-data += "/data/resources/*"
 FILES_${PN}-data += "/data/overrides"
 FILES_${PN}-scripts += "/home/root/scripts/*"
 
@@ -58,8 +65,11 @@ do_install () {
 	install -m 0755 bin/otto ${D}${OTTO_INSTALL_DIR}/bin/otto
 	install -m 0755 bin/test ${D}${OTTO_INSTALL_DIR}/bin/otto-tests
 	
+	# Install data and resources
 	install -d ${D}/data/data
 	cp -r ${S}/data/* ${D}/data/data
+	install -d ${D}/data/resources
+	cp -r ${S}/resources/* ${D}/data/resources
 
 	# Prepare an overrides folder for adding otto override.
 	# To use, copy over directories:
