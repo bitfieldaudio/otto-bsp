@@ -6,5 +6,5 @@ do_compile_append() {
 }
 # Deploy this so it can be found by wic.
 do_deploy_append() {
-  install -D -m 755 ${B}/${config}/uboot.env ${DEPLOYDIR}/uboot.env                    
+  install -D -m 755 ${B}/${config}/uboot.env ${DEPLOYDIR}/uboot.env             
 }
