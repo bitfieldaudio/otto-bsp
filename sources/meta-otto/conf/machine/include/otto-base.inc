@@ -4,7 +4,7 @@ DEFAULTTUNE ?= "cortexa7thf-neon-vfpv4"
 
 IMAGE_FSTYPES = "wic ext4.gz"
 WKS_FILE = "sdimage-otto.wks"
-EXTRA_IMAGECMD_wic = "--no-fstab-update "
+WIC_CREATE_EXTRA_ARGS = "--no-fstab-update"
 
 require conf/machine/include/tune-cortexa7.inc
 require conf/machine/include/rpi-base.inc
